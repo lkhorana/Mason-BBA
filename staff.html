@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mason BBA — Staff Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="style.css">
 <style>
 /* Staff-only extras */
 .esc-q   { color:var(--text);line-height:1.45;max-width:340px }
@@ -57,7 +57,7 @@
         <a href="staff.html#faq"      class="qlk">Manage FAQ Escalations<div class="qlk-sub">6 unresolved — 2 overdue</div></a>
         <a href="staff.html#transfer" class="qlk">Review Transfer Credits<div class="qlk-sub">12 expired decisions need re-review</div></a>
         <a href="staff.html#advising" class="qlk">View Advising Appointments<div class="qlk-sub">4 this week with pre-loaded summaries</div></a>
-        <a href="mailto:bba@mason.wm.edu" class="qlk">Email BBA Office<div class="qlk-sub">bba@mason.wm.edu</div></a>
+        <a href="/cdn-cgi/l/email-protection#dcbebebd9cb1bdafb3b2f2abb1f2b9b8a9" class="qlk">Email BBA Office<div class="qlk-sub"><span class="__cf_email__" data-cfemail="7b19191a3b161a081415550c16551e1f0e">[email&#160;protected]</span></div></a>
       </div>
 
       <div class="sidebar-card" style="margin-top:16px">
@@ -431,8 +431,8 @@
 <div class="toast" id="toast"></div>
 
 <!-- ── SCRIPTS ── -->
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="data.js"></script>
+<script src="app.js"></script>
 <script>
 // ── TAB ROUTING ──────────────────────────────────────────────────────────────
 const TABS = ['overview','transfer','faq','advising'];
@@ -646,13 +646,4 @@ function closeApptModal(ev) {
   document.getElementById('apptModal').classList.remove('open');
 }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
-(function init() {
-  const hash = location.hash.replace('#','') || 'overview';
-  const tab  = TABS.includes(hash) ? hash : 'overview';
-  showTab(tab);
-  updateEscStats();
-})();
-</script>
-</body>
-</html>
+// ── INIT ──────────────────────────────────────────────────────────
