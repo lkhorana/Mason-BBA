@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mason BBA — Staff Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
 /* ── DESIGN TOKENS ── */
 :root {
@@ -338,6 +339,57 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 </style>
 </head>
 <body>
+
+<!-- ── NETLIFY IDENTITY AUTH GATE ── -->
+<script>
+(function() {
+  // Hide everything until auth confirmed
+  document.documentElement.style.visibility = 'hidden';
+
+  const ALLOWED = [
+    'terry.hinders@mason.wm.edu',
+    'andy.kandell@mason.wm.edu'
+  ];
+
+  function checkUser(user) {
+    if (!user) {
+      // Not logged in — show login modal
+      document.documentElement.style.visibility = 'visible';
+      netlifyIdentity.open('login');
+      return;
+    }
+    if (!ALLOWED.includes(user.email.toLowerCase())) {
+      // Wrong email — sign them out and show error
+      netlifyIdentity.logout();
+      document.documentElement.style.visibility = 'visible';
+      document.body.innerHTML = `
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F5F0E8;font-family:'Inter',sans-serif">
+          <div style="background:white;border:1px solid #DDD8CE;border-radius:12px;padding:40px 48px;text-align:center;max-width:400px">
+            <div style="width:48px;height:48px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px">&#128274;</div>
+            <h2 style="font-family:'Georgia',serif;color:#115740;margin-bottom:8px;font-size:20px">Access restricted</h2>
+            <p style="color:#8A8A8A;font-size:13px;line-height:1.6;margin-bottom:20px">
+              This dashboard is only accessible to authorised BBA Office staff.<br>
+              Your email <strong style="color:#1C1C1C">${user.email}</strong> is not on the access list.
+            </p>
+            <p style="color:#8A8A8A;font-size:12px">Contact <a href="mailto:bba@mason.wm.edu" style="color:#115740">bba@mason.wm.edu</a> if you believe this is an error.</p>
+          </div>
+        </div>`;
+      return;
+    }
+    // Authorised — show the dashboard
+    document.documentElement.style.visibility = 'visible';
+  }
+
+  if (typeof netlifyIdentity !== 'undefined') {
+    netlifyIdentity.on('init',   user => checkUser(user));
+    netlifyIdentity.on('login',  user => { netlifyIdentity.close(); checkUser(user); });
+    netlifyIdentity.on('logout', ()   => { document.documentElement.style.visibility='visible'; netlifyIdentity.open('login'); });
+  } else {
+    // netlify-identity-widget.js didn't load (local dev / GitHub Pages fallback)
+    document.documentElement.style.visibility = 'visible';
+  }
+})();
+</script>
 
 <!-- ── HEADER ── -->
 <header class="portal-header">
