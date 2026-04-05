@@ -362,8 +362,33 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 }
 
 
-/* ── EMAIL MODULE ── */
-/* ── Reset & base ───────────────────────────────────────── */
+/* ── EMAIL MODULE — exact from friend ── */
+ tags goes into your main stylesheet
+     or inside a <style> block in the parent page.
+
+  2. COPY THE HTML:
+     The <div id="bba-email-module"> block replaces the current
+     email inbox placeholder tab content in the staff dashboard,
+     and the student form goes into the student-facing portal.
+
+  3. COPY THE JAVASCRIPT:
+     The <script> block at the bottom goes into your main JS file
+     or just before </body> in the parent page.
+
+  4. DATA INTEGRATION:
+     - Replace the `emails` array with a real API fetch once
+       Terry's shared inbox access is set up.
+     - The `submitForm()` function currently previews only —
+       wire it to your backend or mailto: handler as needed.
+     - See "// TODO:" comments throughout for integration hooks.
+
+  5. DEPENDENCIES:
+     None. Pure HTML/CSS/JS — no libraries required.
+  ============================================================
+  -->
+
+  <style>
+    /* ── Reset & base ───────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -5795,8 +5820,9 @@ function closeApptModal(ev) {
 <section id="email" class="page-wrap" style="display:none">
   <p class="page-eyebrow">BBA Office</p>
   <h1 class="page-title">Email Inbox</h1>
-  <p class="page-sub">Incoming student emails auto-matched against the FAQ knowledge base. Staff inbox shows all messages with reply drafts. Student submission shows how students send emails.</p>
-  <div id="bba-email-module"> block replaces the current
+  <p class="page-sub">Student emails with automatic FAQ matching. Staff inbox has AI-assisted draft replies.</p>
+
+<div id="bba-email-module"> block replaces the current
      email inbox placeholder tab content in the staff dashboard,
      and the student form goes into the student-facing portal.
 
@@ -6281,14 +6307,8 @@ function closeApptModal(ev) {
             <input type="text" id="em-name" placeholder="Jane Smith" />
           </div>
           <div class="em-field">
-            <label>W&amp;M Email</label>
+            <label>WM email</label>
             <input type="email" id="em-email" placeholder="jsmith@wm.edu" />
-          </div>
-        </div>
-        <div class="em-grid-2">
-          <div class="em-field">
-            <label>Student ID <span style="color:#C0392B">*</span></label>
-            <input type="text" id="em-sid" placeholder="W00000000" />
           </div>
         </div>
       </div>
@@ -6323,7 +6343,7 @@ function closeApptModal(ev) {
         <div class="em-preview-label">Email preview — sent to BBA office</div>
         <div class="em-preview-row">
           <span class="em-preview-key">To:</span>
-          <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1b79797a5b767a687475356c76357e7f6e">[email&#160;protected]</a></span>
+          <span>bba@mason.wm.edu</span>
           <!-- TODO: replace with real inbox address -->
         </div>
         <div class="em-preview-row">
@@ -6370,11 +6390,13 @@ function closeApptModal(ev) {
     </div><!-- /staff panel -->
 
   </div>
+
 </section>
 
 <script>
-/* ── EMAIL MODULE JS ── */
-var emSelectedCat   = '';
+/* ── EMAIL MODULE — exact from friend ── */
+/* ── State ──────────────────────────────────────────────── */
+    var emSelectedCat   = '';
     var emCurrentFilter = 'all';
     var emCurrentEmail  = null;
     var emDraftVisible  = false;
@@ -6783,4 +6805,18 @@ var emSelectedCat   = '';
       if (btn) {
         var orig = btn.textContent;
         btn.textContent = 'Copied!';
-        setTimeout(function(){ btn.textContent =
+        setTimeout(function(){ btn.textContent = orig; }, 1800);
+      }
+    }
+
+    function emClearDraft() {
+      var ta = document.getElementById('em-draft-textarea');
+      if (ta) { ta.value = ''; ta.focus();
+      ta.focus();
+    }
+
+    emStats();
+    emRender();
+</script>
+</body>
+</html>
