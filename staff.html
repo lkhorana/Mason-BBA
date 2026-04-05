@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mason BBA — Staff Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
 /* ── DESIGN TOKENS ── */
 :root {
@@ -795,154 +794,189 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 </head>
 <body>
 
-<!-- ── AUTH GATE: custom login screen, no modal, no X button ── -->
+<!-- ── AUTH GATE: inline form, no Netlify modal ever ── -->
 <style>
 #auth-screen {
-  position:fixed; inset:0; z-index:9000;
+  position:fixed; inset:0; z-index:99999;
   background:#F5F0E8;
   display:flex; align-items:center; justify-content:center;
   font-family:'Inter',sans-serif;
-  transition: opacity 0.15s;
-}
-#auth-screen.modal-open {
-  /* Step back so Netlify modal (which renders at very high z-index) is clickable */
-  background: rgba(245,240,232,0.15);
-  pointer-events: none;
-}
-#auth-screen.modal-open .box {
-  pointer-events: all;
 }
 #auth-screen .box {
   background:white; border:1px solid #DDD8CE; border-radius:14px;
-  padding:44px 48px; text-align:center; width:380px; max-width:92vw;
+  padding:44px 48px; text-align:center; width:400px; max-width:92vw;
   box-shadow:0 4px 24px rgba(0,0,0,.08);
 }
 #auth-screen .seal {
   width:52px; height:52px; border-radius:50%; background:#115740;
   display:flex; align-items:center; justify-content:center;
   margin:0 auto 18px; font-family:'Georgia',serif;
-  font-size:22px; font-weight:700; color:#B9975B;
+  font-size:20px; font-weight:700; color:#B9975B;
 }
 #auth-screen h2 {
   font-family:'Georgia',serif; font-size:19px; color:#1C1C1C;
   margin-bottom:4px; font-weight:700;
 }
 #auth-screen .sub {
-  font-size:12px; color:#8A8A8A; margin-bottom:26px; line-height:1.6;
+  font-size:12.5px; color:#8A8A8A; margin-bottom:24px; line-height:1.6;
+}
+#auth-screen .field {
+  text-align:left; margin-bottom:14px;
+}
+#auth-screen .field label {
+  display:block; font-size:10px; font-weight:700; letter-spacing:.7px;
+  text-transform:uppercase; color:#8A8A8A; margin-bottom:5px;
+}
+#auth-screen .field input {
+  width:100%; padding:10px 13px;
+  border:1px solid #DDD8CE; border-radius:8px;
+  font-family:'Inter',sans-serif; font-size:14px; color:#1C1C1C;
+  outline:none; transition:border-color .15s; background:white;
+  -webkit-appearance:none;
+}
+#auth-screen .field input:focus {
+  border-color:#115740; box-shadow:0 0 0 3px rgba(17,87,64,.07);
 }
 #auth-screen .btn-login {
-  width:100%; padding:11px; background:#115740; color:white;
+  width:100%; padding:12px; background:#115740; color:white;
   border:none; border-radius:8px; font-size:14px; font-weight:600;
-  cursor:pointer; font-family:'Inter',sans-serif; transition:background .15s;
+  cursor:pointer; font-family:'Inter',sans-serif;
+  margin-top:4px; transition:background .15s;
 }
-#auth-screen .btn-login:hover { background:#0d4230; }
+#auth-screen .btn-login:hover  { background:#0d4230; }
+#auth-screen .btn-login:disabled { background:#aaa; cursor:not-allowed; }
+#auth-error {
+  background:#FDECEA; border:1px solid #E8B4B0; border-radius:7px;
+  padding:10px 13px; font-size:12.5px; color:#C0392B;
+  margin-bottom:14px; display:none; text-align:left; line-height:1.5;
+}
+#auth-spinner { font-size:12px; color:#8A8A8A; margin-top:10px; display:none; }
 #auth-screen .student-link {
-  display:block; margin-top:16px; font-size:12px; color:#8A8A8A;
+  margin-top:18px; font-size:12px; color:#8A8A8A;
 }
 #auth-screen .student-link a { color:#1A5EA8; text-decoration:none; }
 #auth-screen .student-link a:hover { text-decoration:underline; }
-#auth-error {
-  background:#FDECEA; border:1px solid #E8B4B0; border-radius:7px;
-  padding:10px 14px; font-size:12.5px; color:#C0392B;
-  margin-bottom:16px; display:none; line-height:1.5; text-align:left;
-}
 </style>
 
-<!-- Login screen sits on top of everything -->
 <div id="auth-screen">
   <div class="box">
     <div class="seal">W</div>
     <h2>Staff Dashboard</h2>
     <p class="sub">Mason School of Business — BBA Office<br>Authorised staff only</p>
     <div id="auth-error"></div>
-    <button class="btn-login" onclick="doLogin()">Sign in with BBA Office account</button>
-    <span class="student-link">Looking for the student portal? <a href="index.html">Go here</a></span>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="auth-email" placeholder="yourname@mason.wm.edu"
+        onkeydown="if(event.key==='Enter')document.getElementById('auth-pass').focus()">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="auth-pass" placeholder="Your password"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" id="auth-btn" onclick="doLogin()">Sign in</button>
+    <div id="auth-spinner">Signing in…</div>
+    <p class="student-link">
+      Looking for the student portal? <a href="index.html">Go here</a>
+    </p>
   </div>
 </div>
 
-<!-- Dashboard content is underneath, fully hidden -->
 <div id="dashboard-content" style="display:none">
 
 <script>
 (function() {
-  const ALLOWED = [
+  var ALLOWED = [
     'terry.hinders@mason.wm.edu',
     'andy.kandell@mason.wm.edu'
   ];
 
+  // Netlify Identity API endpoint — auto-detected from current domain
+  var API = window.location.origin + '/.netlify/identity';
+
   function showError(msg) {
-    const el = document.getElementById('auth-error');
+    var el = document.getElementById('auth-error');
     el.textContent = msg;
     el.style.display = 'block';
+    document.getElementById('auth-spinner').style.display = 'none';
+    document.getElementById('auth-btn').disabled = false;
   }
 
   function grantAccess() {
-    // Hide login screen, show dashboard
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
   }
 
-  function denyAccess(email) {
-    if (email) {
-      showError(email + ' is not authorised. Contact bba@mason.wm.edu to request access.');
-    } else {
-      showError('You must sign in to access this page.');
-    }
-    // Make sure login screen stays visible
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('dashboard-content').style.display = 'none';
+  // Check for existing valid session in localStorage
+  function checkExistingSession() {
+    try {
+      var raw = localStorage.getItem('gotrue.user');
+      if (!raw) return false;
+      var user = JSON.parse(raw);
+      if (!user || !user.email || !user.token) return false;
+      // Check token not expired
+      var exp = user.token.expires_at;
+      if (exp && new Date(exp) < new Date()) return false;
+      // Check email allowed
+      if (!ALLOWED.includes(user.email.toLowerCase())) return false;
+      return true;
+    } catch(e) { return false; }
   }
 
+  // On page load — if valid session exists, skip login screen
+  if (checkExistingSession()) {
+    grantAccess();
+  }
+
+  // Login with Netlify Identity REST API directly — no popup widget
   window.doLogin = function() {
-    if (typeof netlifyIdentity === 'undefined') {
-      showError('Authentication unavailable. Try opening this page from the live site.');
-      return;
-    }
-    // Step the auth screen back so the Netlify modal is fully clickable
-    var screen = document.getElementById('auth-screen');
-    if (screen) screen.classList.add('modal-open');
-    netlifyIdentity.open('login');
+    var email = document.getElementById('auth-email').value.trim().toLowerCase();
+    var pass  = document.getElementById('auth-pass').value;
+
+    if (!email) { showError('Please enter your email address.'); return; }
+    if (!pass)  { showError('Please enter your password.'); return; }
+
+    document.getElementById('auth-btn').disabled = true;
+    document.getElementById('auth-spinner').style.display = 'block';
+    document.getElementById('auth-error').style.display   = 'none';
+
+    // Hit Netlify Identity token endpoint directly — no modal involved
+    fetch(API + '/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'grant_type=password&username=' + encodeURIComponent(email)
+          + '&password=' + encodeURIComponent(pass)
+    })
+    .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+    .then(function(r) {
+      if (!r.ok) {
+        showError(r.data.error_description || 'Incorrect email or password. Please try again.');
+        return;
+      }
+      // Got a token — now get user details to check email
+      return fetch(API + '/user', {
+        headers: { 'Authorization': 'Bearer ' + r.data.access_token }
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(user) {
+        if (!ALLOWED.includes(user.email.toLowerCase())) {
+          showError(user.email + ' is not authorised to access this dashboard.');
+          return;
+        }
+        // Save session to localStorage so it persists on refresh
+        localStorage.setItem('gotrue.user', JSON.stringify({
+          email: user.email,
+          token: { access_token: r.data.access_token,
+                   expires_at: new Date(Date.now() + r.data.expires_in * 1000).toISOString() }
+        }));
+        grantAccess();
+      });
+    })
+    .catch(function() {
+      showError('Could not reach the authentication server. Make sure you are on the live Netlify site.');
+    });
   };
 
-  // When Netlify modal closes without login, restore auth screen
-  if (typeof netlifyIdentity !== 'undefined') {
-    netlifyIdentity.on('close', function() {
-      var screen = document.getElementById('auth-screen');
-      if (screen && !netlifyIdentity.currentUser()) {
-        screen.classList.remove('modal-open');
-      }
-    });
-  }
-
-  if (typeof netlifyIdentity !== 'undefined') {
-
-    netlifyIdentity.on('init', user => {
-      if (user && ALLOWED.includes(user.email.toLowerCase())) {
-        grantAccess();
-      }
-      // If no user: login screen stays visible — nothing else needed
-    });
-
-    netlifyIdentity.on('login', user => {
-      netlifyIdentity.close();
-      if (ALLOWED.includes(user.email.toLowerCase())) {
-        grantAccess();
-      } else {
-        netlifyIdentity.logout();
-        denyAccess(user.email);
-      }
-    });
-
-    // close event: do nothing — login screen is already showing
-    // User cannot get to dashboard by pressing X because dashboard is display:none
-    // and only grantAccess() can make it visible
-
-    netlifyIdentity.on('logout', () => {
-      document.getElementById('auth-screen').style.display = 'flex';
-      document.getElementById('dashboard-content').style.display = 'none';
-    });
-  }
-  // If widget fails: login screen stays visible, dashboard stays hidden — safe
 })();
 </script>
 
