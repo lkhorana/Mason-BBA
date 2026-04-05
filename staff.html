@@ -25,21 +25,13 @@
     const { data: { user } } = await supabase.auth.getUser()
   
     if (!user || !allowedEmails.includes(user.email)) {
-      window.location.href = "/index.html"
+      window.location.href = "index.html"
     }
   }
   
   checkUser()
   </script>
-  
-  ✅ This will redirect anyone not in your small list of staff emails back to the homepage.
-  
-  If you want, I can also show a tiny addition so the page automatically shows the user’s name if they are allowed, which is nice for a staff dashboard.
-  
-  Do you want me to do that?
 
-checkUser()
-</script>
 
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1167,7 +1159,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
         <a href="staff.html#faq"      class="qlk">Manage FAQ Escalations<div class="qlk-sub">6 unresolved — 2 overdue</div></a>
         <a href="staff.html#transfer" class="qlk">Review Transfer Credits<div class="qlk-sub">12 expired decisions need re-review</div></a>
         <a href="staff.html#advising" class="qlk">View Advising Appointments<div class="qlk-sub">4 this week with pre-loaded summaries</div></a>
-        <a href="mailto:bba@mason.wm.edu" class="qlk">Email BBA Office<div class="qlk-sub">bba@mason.wm.edu</div></a>
+        <a href="/cdn-cgi/l/email-protection#d0b2b2b190bdb1a3bfbefea7bdfeb5b4a5" class="qlk">Email BBA Office<div class="qlk-sub"><span class="__cf_email__" data-cfemail="791b1b183914180a1617570e14571c1d0c">[email&#160;protected]</span></div></a>
       </div>
 
       <div class="sidebar-card" style="margin-top:16px">
@@ -1541,7 +1533,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 <div class="toast" id="toast"></div>
 
 <!-- ── SCRIPTS ── -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── BBA PORTAL DATA FILE ──
 // Auto-generated from Blackboard + mason.wm.edu scraped content
 // FAQ: 65 answers | Transfer Credits: 360 records
@@ -7103,16 +7095,4 @@ var emSelectedCat   = '';
       if (btn) {
         var orig = btn.textContent;
         btn.textContent = 'Copied!';
-        setTimeout(function(){ btn.textContent = orig; }, 1800);
-      }
-    }
-
-    function emClearDraft() {
-      var ta = document.getElementById('em-draft-textarea');
-      if (ta) { ta.value = ''; ta.focus()
-
-emStats();
-</script>
-</div><!-- /dashboard-content -->
-</body>
-</html>
+        setTimeout(function(){ btn.textContent =
