@@ -949,10 +949,32 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 
     // Netlify sends tokens in the URL hash after invite/password reset
     // Handle both access_token (direct) and confirmation_token (invite)
-    if (hash.access_token || hash.confirmation_token) {
+    if (hash.access_token || hash.confirmation_token || hash.recovery_token) {
       history.replaceState(null, '', window.location.pathname);
 
       var token = hash.access_token;
+      var type  = hash.recovery_token ? 'recovery' : 'invite';
+
+      // recovery_token = password reset link — exchange it first
+      if (hash.recovery_token) {
+        fetch(API + '/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: hash.recovery_token, type: 'recovery' })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data.access_token) {
+            verifyAndGrant(data.access_token);
+          } else {
+            showInviteMessage('Password reset confirmed. Please log in below with your email and new password.');
+          }
+        })
+        .catch(function() {
+          showInviteMessage('Password reset confirmed. Please log in below with your new password.');
+        });
+        return;
+      }
 
       function verifyAndGrant(accessToken) {
         fetch(API + '/user', {
