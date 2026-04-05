@@ -330,118 +330,25 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 }
 
 
+/* ── EMAIL MODULE vars (maps friend's vars to our design tokens) ── */
+:root {
+  --color-bg-surface:     #FFFFFF;
+  --color-bg-muted:       #F5F0E8;
+  --color-border:         rgba(0,0,0,0.10);
+  --color-border-strong:  rgba(0,0,0,0.18);
+  --color-text-primary:   #1C1C1C;
+  --color-text-secondary: #4A4A4A;
+  --color-text-hint:      #8A8A8A;
+  --color-accent:         #1A5EA8;
+  --color-accent-bg:      #E8EEF8;
+  --color-accent-text:    #0C447C;
+  --radius-md:            8px;
+  --radius-lg:            12px;
+  --radius-xl:            16px;
+}
+
 /* ── EMAIL MODULE ── */
- tags goes into your main stylesheet
-     or inside a <style> block in the parent page.
-
-  2. COPY THE HTML:
-     The <div id="bba-email-module"> block replaces the current
-     email inbox placeholder tab content in the staff dashboard,
-     and the student form goes into the student-facing portal.
-
-  3. COPY THE JAVASCRIPT:
-     The <script> block at the bottom goes into your main JS file
-     or just before <script>
-/* ── EMAIL MODULE — student submission (matches friend's implementation) ── */
-var emSelectedCat = '';
-
-function emSelectCat(btn, cat) {
-  document.querySelectorAll('.em-cat-btn').forEach(function(b){ b.classList.remove('selected'); });
-  btn.classList.add('selected');
-  emSelectedCat = cat;
-}
-
-function emSubmit() {
-  var name    = document.getElementById('em-name').value.trim();
-  var email   = document.getElementById('em-email').value.trim();
-  var sid     = document.getElementById('em-sid') ? document.getElementById('em-sid').value.trim() : '';
-  var major   = document.getElementById('em-major') ? document.getElementById('em-major').value.trim() : '';
-  var subject = document.getElementById('em-subject').value.trim() || 'BBA inquiry';
-  var body    = document.getElementById('em-body').value.trim()    || '(No message provided.)';
-  var cat     = emSelectedCat || 'General question';
-
-  // Basic validation
-  if (!name)  { alert('Please enter your full name.');   return; }
-  if (!email) { alert('Please enter your W&M email.');   return; }
-  if (sid && !sid.match(/^W\d{7}$/i)) { alert('Student ID should be in the format W0000000.'); return; }
-
-  var fullSubject = '[' + cat + '] ' + subject;
-  var fullBody    = 'Category: ' + cat + '
-'
-    + 'Name: ' + name + '
-'
-    + (sid   ? 'Student ID: ' + sid + '
-'   : '')
-    + (major ? 'Major: ' + major + '
-'       : '')
-    + 'Email: ' + email + '
-
-'
-    + body + '
-
-— Sent via BBA Student Portal';
-
-  document.getElementById('em-prev-from').textContent    = name + ' <' + email + '>';
-  document.getElementById('em-prev-subject').textContent = fullSubject;
-  document.getElementById('em-prev-body').textContent    = fullBody;
-  document.getElementById('em-preview').classList.add('show');
-
-  // Store for send/copy actions
-  window._emSubject = fullSubject;
-  window._emBody    = fullBody;
-}
-
-function emSendEmail() {
-  if (!window._emSubject) { alert('Please fill in and preview the form first.'); return; }
-  window.location.href = 'mailto:bba@mason.wm.edu'
-    + '?subject=' + encodeURIComponent(window._emSubject)
-    + '&body='    + encodeURIComponent(window._emBody);
-}
-
-function emCopyEmail() {
-  if (!window._emBody) { alert('Please fill in and preview the form first.'); return; }
-  var text = 'To: bba@mason.wm.edu
-Subject: ' + window._emSubject + '
-
-' + window._emBody;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function(){ alert('Copied to clipboard!'); });
-  } else {
-    var ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    alert('Copied to clipboard!');
-  }
-}
-
-function emResetForm() {
-  ['em-name','em-email','em-sid','em-major','em-subject','em-body'].forEach(function(id){
-    var el = document.getElementById(id); if (el) el.value = '';
-  });
-  document.querySelectorAll('.em-cat-btn').forEach(function(b){ b.classList.remove('selected'); });
-  var prev = document.getElementById('em-preview');
-  if (prev) prev.classList.remove('show');
-  emSelectedCat = '';
-  window._emSubject = window._emBody = '';
-}
-</script>
-</body>
-</body> in the parent page.
-
-  4. DATA INTEGRATION:
-     - Replace the `emails` array with a real API fetch once
-       Terry's shared inbox access is set up.
-     - The `submitForm()` function currently previews only —
-       wire it to your backend or mailto: handler as needed.
-     - See "// TODO:" comments throughout for integration hooks.
-
-  5. DEPENDENCIES:
-     None. Pure HTML/CSS/JS — no libraries required.
-  ============================================================
-  -->
-
-  <style>
-    /* ── Reset & base ───────────────────────────────────────── */
+/* ── Reset & base ───────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -868,7 +775,6 @@ function emResetForm() {
       .em-urgency-row { flex-direction: column; }
       body           { padding: 1rem; }
     }
-  
 </style>
 </head>
 <body>

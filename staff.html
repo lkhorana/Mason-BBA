@@ -888,7 +888,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 (function() {
   var ALLOWED = [
     'terry.hinders@mason.wm.edu',
-    'andy.kandell@mason.wm.edu'
+    'andy.kandell@mason.wm.edu',
+    'lkhorana@wm.edu'
   ];
 
   // Netlify Identity API endpoint — auto-detected from current domain
@@ -902,9 +903,30 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
     document.getElementById('auth-btn').disabled = false;
   }
 
+  function showInviteMessage(msg) {
+    var el = document.getElementById('auth-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+    // Green tint for success/info messages
+    el.style.background = '#E6F2EF';
+    el.style.borderColor = '#9FCEC7';
+    el.style.color = '#0F6B5A';
+  }
+
   function grantAccess() {
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
+  }
+
+  // Parse URL hash fragments (Netlify sends tokens here on invite/recovery)
+  function parseHash() {
+    var hash = window.location.hash.substring(1);
+    var params = {};
+    hash.split('&').forEach(function(part) {
+      var pair = part.split('=');
+      if (pair.length === 2) params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+    });
+    return params;
   }
 
   // Check for existing valid session in localStorage
@@ -914,19 +936,81 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
       if (!raw) return false;
       var user = JSON.parse(raw);
       if (!user || !user.email || !user.token) return false;
-      // Check token not expired
       var exp = user.token.expires_at;
       if (exp && new Date(exp) < new Date()) return false;
-      // Check email allowed
       if (!ALLOWED.includes(user.email.toLowerCase())) return false;
       return true;
     } catch(e) { return false; }
   }
 
-  // On page load — if valid session exists, skip login screen
-  if (checkExistingSession()) {
-    grantAccess();
-  }
+  // On page load: check hash first, then existing session
+  (function() {
+    var hash = parseHash();
+
+    // Netlify sends tokens in the URL hash after invite/password reset
+    // Handle both access_token (direct) and confirmation_token (invite)
+    if (hash.access_token || hash.confirmation_token) {
+      history.replaceState(null, '', window.location.pathname);
+
+      var token = hash.access_token;
+
+      function verifyAndGrant(accessToken) {
+        fetch(API + '/user', {
+          headers: { 'Authorization': 'Bearer ' + accessToken }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(user) {
+          if (!user || !user.email) {
+            showInviteMessage('Your invite link has expired. Please log in below if you have already set your password, or contact bba@mason.wm.edu for a new invite.');
+            return;
+          }
+          if (!ALLOWED.includes(user.email.toLowerCase())) {
+            document.getElementById('auth-error').textContent =
+              user.email + ' is not authorised to access this dashboard.';
+            document.getElementById('auth-error').style.display = 'block';
+            return;
+          }
+          localStorage.setItem('gotrue.user', JSON.stringify({
+            email: user.email,
+            token: { access_token: accessToken,
+                     expires_at: new Date(Date.now() + 3600 * 1000).toISOString() }
+          }));
+          grantAccess();
+        })
+        .catch(function() {
+          showInviteMessage('Invite verified — please log in with your email and the password you just set.');
+        });
+      }
+
+      if (token) {
+        verifyAndGrant(token);
+      } else {
+        // confirmation_token — exchange it for an access_token via Netlify API
+        fetch(API + '/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: hash.confirmation_token, type: 'invite' })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data.access_token) {
+            verifyAndGrant(data.access_token);
+          } else {
+            showInviteMessage('Invite accepted! Your account is ready. Please log in below with your email and the password you just created.');
+          }
+        })
+        .catch(function() {
+          showInviteMessage('Invite accepted! Please log in below with your email and the password you set when you accepted the invite.');
+        });
+      }
+      return;
+    }
+
+    // No hash token — check for existing saved session
+    if (checkExistingSession()) {
+      grantAccess();
+    }
+  })();
 
   // Login with Netlify Identity REST API directly — no popup widget
   window.doLogin = function() {
