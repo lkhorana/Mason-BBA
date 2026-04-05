@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mason BBA — Student Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -22,10 +22,10 @@
     </div>
   </div>
   <nav class="tab-bar">
-    <a href="#home"     class="tab-btn active" id="tab-home"     onclick="showTab('home');return false">Home</a>
-    <a href="#transfer" class="tab-btn"        id="tab-transfer" onclick="showTab('transfer');return false">Transfer Credits</a>
-    <a href="#faq"      class="tab-btn"        id="tab-faq"      onclick="showTab('faq');return false">FAQ</a>
-    <a href="#guidance" class="tab-btn"        id="tab-guidance" onclick="showTab('guidance');return false">Guidance &amp; Advising</a>
+    <button class="tab-btn active" id="tab-home"     onclick="showTab('home')">Home</button>
+    <button class="tab-btn"        id="tab-transfer" onclick="showTab('transfer')">Transfer Credits</button>
+    <button class="tab-btn"        id="tab-faq"      onclick="showTab('faq')">FAQ</button>
+    <button class="tab-btn"        id="tab-guidance" onclick="showTab('guidance')">Guidance &amp; Advising</button>
   </nav>
 </header>
 
@@ -45,14 +45,14 @@
         <a href="student.html#transfer" class="qlk">Check a Transfer Credit Decision<div class="qlk-sub">360 decisions from 108 institutions on file</div></a>
         <a href="student.html#faq"      class="qlk">Search the FAQ<div class="qlk-sub">65 answers from Blackboard + mason.wm.edu</div></a>
         <a href="student.html#guidance" class="qlk">Book an Advising Appointment<div class="qlk-sub">4-step form — Calendly pre-filled for you</div></a>
-        <a href="/cdn-cgi/l/email-protection#43212122032e22302c2d6d342e6d262736" class="qlk">Email the BBA Office<div class="qlk-sub"><span class="__cf_email__" data-cfemail="6a08080b2a070b190504441d07440f0e1f">[email&#160;protected]</span></div></a>
+        <a href="mailto:bba@mason.wm.edu" class="qlk">Email the BBA Office<div class="qlk-sub">bba@mason.wm.edu</div></a>
       </div>
       <div class="sidebar-card" style="margin-top:16px">
         <div class="sc-hd">Office hours</div>
         <div class="sc-row"><span class="sc-label">Walk-in hours</span><span class="sc-val">Mon &amp; Wed 9am–12pm</span></div>
         <div class="sc-row"><span class="sc-label"></span><span class="sc-val">Tue 1pm–3pm</span></div>
         <div class="sc-row"><span class="sc-label">Location</span><span class="sc-val">Miller Hall Suite 2013</span></div>
-        <div class="sc-row"><span class="sc-label">Email</span><span class="sc-val" style="color:var(--blue)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6f0d0d0e2f020e1c0001411802410a0b1a">[email&#160;protected]</a></span></div>
+        <div class="sc-row"><span class="sc-label">Email</span><span class="sc-val" style="color:var(--blue)">bba@mason.wm.edu</span></div>
       </div>
     </div>
   </div>
@@ -216,7 +216,7 @@
   <div style="text-align:center;margin-top:22px;padding:20px;background:var(--cream-dk);border-radius:var(--r)">
     <p style="font-size:13px;color:var(--mid);margin-bottom:12px">Still have a question? Reach out or book an appointment.</p>
     <div class="btn-row" style="justify-content:center">
-      <a href="/cdn-cgi/l/email-protection#e7858586a78a86948889c9908ac9828392" class="btn btn-green">Email <span class="__cf_email__" data-cfemail="dbb9b9ba9bb6baa8b4b5f5acb6f5bebfae">[email&#160;protected]</span></a>
+      <a href="mailto:bba@mason.wm.edu" class="btn btn-green">Email bba@mason.wm.edu</a>
       <a href="student.html#guidance"   class="btn btn-ghost">Book an Appointment</a>
     </div>
   </div>
@@ -380,7 +380,7 @@
           <button class="cal-btn" onclick="gOpenCal()">Schedule Now &rarr;</button>
         </div>
         <p style="font-size:12px;color:var(--lt);margin-top:12px;line-height:1.6">
-          Bring any attachments to the appointment or email them to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6a08080b2a070b190504441d07440f0e1f">[email&#160;protected]</a> in advance.<br>
+          Bring any attachments to the appointment or email them to bba@mason.wm.edu in advance.<br>
           Walk-in hours: Mon &amp; Wed 9am–12pm, Tue 1–3pm · Miller Hall Suite 2013.
         </p>
         <div class="gs-foot">
@@ -397,8 +397,8 @@
 <div class="toast" id="toast"></div>
 
 <!-- ── SCRIPTS ── -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="data.js"></script>
-<script src="app.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
 <script>
 // ── TAB ROUTING ──────────────────────────────────────────────────────────────
 const TABS = ['home','transfer','faq','guidance'];
@@ -527,4 +527,14 @@ function stuReset() {
   const hash = location.hash.replace('#','') || 'home';
   const tab  = TABS.includes(hash) ? hash : 'home';
   showTab(tab);
+  // Wire internal quick-links that use student.html# hrefs
+  document.querySelectorAll('a[href^="student.html#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      showTab(this.getAttribute('href').split('#')[1]);
+    });
+  });
 })();
+</script>
+</body>
+</html>
