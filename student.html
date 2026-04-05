@@ -779,6 +779,19 @@ function downloadPlanExcel() {
       + '&body='    + encodeURIComponent(emailBody);
   }, 800);
 
+  // Save submission to localStorage for staff portal
+  try {
+    var submissions = JSON.parse(localStorage.getItem('bba_plan_submissions') || '[]');
+    submissions.unshift({
+      ts: new Date().toISOString(),
+      name: d.name, sid: d.sid, email: d.email,
+      major: d.major, conc: d.conc, minor: d.minor,
+      creditsNow: creditsNow, creditsPlanned: creditsPlanned, creditsTotal: creditsTotal,
+      semesters: d.semesters, notes: d.notes
+    });
+    localStorage.setItem('bba_plan_submissions', JSON.stringify(submissions.slice(0, 100)));
+  } catch(e) {}
+
   showToast('Excel downloaded! Opening email to send to BBA Office…');
 }
 

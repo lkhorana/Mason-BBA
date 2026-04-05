@@ -821,6 +821,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
     <button class="tab-btn"        id="tab-faq"      onclick="showTab('faq')">FAQ Escalations</button>
     <button class="tab-btn"        id="tab-advising" onclick="showTab('advising')">Advising Appointments</button>
     <button class="tab-btn" id="tab-email" onclick="showTab('email')">Email Inbox</button>
+    <button class="tab-btn" id="tab-plans" onclick="showTab('plans')">Course Plans</button>
   </nav>
 </header>
 
@@ -5575,7 +5576,7 @@ function gReset() {
 </script>
 <script>
 // ── TAB ROUTING ──────────────────────────────────────────────────────────────
-const TABS = ['overview','transfer','faq','advising','email'];
+const TABS = ['overview','transfer','faq','advising','email','plans'];
 
 function showTab(id) {
   TABS.forEach(t => {
@@ -5589,6 +5590,7 @@ function showTab(id) {
   if (id === 'faq')      { escRefresh(); kbRefresh(); }
   if (id === 'advising') { renderAppts(); gSetStep(1); }
   if (id === 'email')    { emStats(); emRender(); }
+  if (id === 'plans')    { renderPlans(); }
   history.replaceState(null, '', '#' + id);
 }
 
@@ -5851,7 +5853,7 @@ function closeApptModal(ev) {
         <div class="em-preview-label">Email preview — sent to BBA office</div>
         <div class="em-preview-row">
           <span class="em-preview-key">To:</span>
-          <span>bba@mason.wm.edu</span>
+          <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86e4e4e7c6ebe7f5e9e8a8f1eba8e3e2f3">[email&#160;protected]</a></span>
           <!-- TODO: replace with real inbox address -->
         </div>
         <div class="em-preview-row">
@@ -5901,7 +5903,7 @@ function closeApptModal(ev) {
 
 </section>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ── EMAIL MODULE — exact from friend ── */
 /* ── State ──────────────────────────────────────────────── */
     var emSelectedCat   = '';
@@ -6314,17 +6316,130 @@ function closeApptModal(ev) {
         var orig = btn.textContent;
         btn.textContent = 'Copied!';
         setTimeout(function(){ btn.textContent = orig; }, 1800);
-      }
+          }
     }
+  </script>
+</section>
 
-    function emClearDraft() {
-      var ta = document.getElementById('em-draft-textarea');
-      if (ta) { ta.value = ''; ta.focus();
-      ta.focus();
-    }
+<!-- ── COURSE PLANS ──────────────────────────────────────────────────────── -->
+<section id="plans" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">BBA Office</p>
+  <h1 class="page-title">Course Plan Submissions</h1>
+  <p class="page-sub">Plans submitted by students via the Student Portal Course Planning worksheet. Submissions are stored locally in the browser and persist across sessions on the same device.</p>
 
-    emStats();
-    emRender();
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <input class="fi-input" id="plans-search" placeholder="Search by name, ID, or major…" oninput="renderPlans()" style="max-width:320px;padding-left:12px">
+    <span id="plans-count" style="font-size:12px;color:var(--lt)"></span>
+    <button class="act-btn" style="margin-left:auto" onclick="clearPlans()">Clear all submissions</button>
+  </div>
+
+  <!-- empty state -->
+  <div id="plans-empty" class="card" style="display:none">
+    <div class="card-body" style="text-align:center;padding:40px;color:var(--lt)">
+      <div style="font-size:32px;margin-bottom:10px">📋</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;color:var(--mid)">No submissions yet</div>
+      <div style="font-size:13px;line-height:1.6">When a student downloads their plan from the Course Planning tab, it will appear here automatically.</div>
+    </div>
+  </div>
+
+  <!-- submissions list -->
+  <div id="plans-list"></div>
+</section>
+
+<script>
+// ── COURSE PLANS ─────────────────────────────────────────────────────────────
+function renderPlans() {
+  var raw = [];
+  try { raw = JSON.parse(localStorage.getItem('bba_plan_submissions') || '[]'); } catch(e) {}
+  var q = (document.getElementById('plans-search') || {}).value || '';
+  var q2 = q.trim().toLowerCase();
+  var subs = q2 ? raw.filter(function(s){
+    return (s.name||'').toLowerCase().includes(q2)
+        || (s.sid||'').toLowerCase().includes(q2)
+        || (s.major||'').toLowerCase().includes(q2)
+        || (s.email||'').toLowerCase().includes(q2);
+  }) : raw;
+
+  var countEl = document.getElementById('plans-count');
+  var emptyEl = document.getElementById('plans-empty');
+  var listEl  = document.getElementById('plans-list');
+  if (!listEl) return;
+
+  if (countEl) countEl.textContent = subs.length + ' submission' + (subs.length !== 1 ? 's' : '');
+  emptyEl.style.display = raw.length === 0 ? 'block' : 'none';
+  listEl.innerHTML = '';
+
+  subs.forEach(function(s, i) {
+    var dt = s.ts ? new Date(s.ts) : null;
+    var dtStr = dt ? dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' ' + dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) : '—';
+    var credTotal = parseInt(s.creditsTotal) || 0;
+    var goalPill = credTotal >= 120
+      ? '<span class="pill pill-green">Goal reached</span>'
+      : credTotal >= 90
+        ? '<span class="pill pill-amber">' + credTotal + '/120 cr</span>'
+        : '<span class="pill pill-red">' + credTotal + '/120 cr</span>';
+
+    var semHTML = (s.semesters || []).map(function(sem){
+      var courses = (sem.courses || []).filter(function(c){ return c.name && c.name.trim(); });
+      var semTotal = (sem.courses||[]).reduce(function(acc,c){ return acc+(parseInt(c.credits)||0); },0);
+      if (!courses.length) return '';
+      return '<div style="margin-bottom:10px">'
+        + '<div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);margin-bottom:4px">' + (sem.term||'') + ' — ' + semTotal + ' cr</div>'
+        + courses.map(function(c){
+            return '<div style="font-size:12.5px;color:var(--mid);padding:2px 0">'
+              + '· ' + c.name + (c.credits ? ' <span style="color:var(--lt)">(' + c.credits + ' cr)</span>' : '')
+              + '</div>';
+          }).join('')
+        + '</div>';
+    }).join('');
+
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.marginBottom = '14px';
+    card.innerHTML = '<div class="card-hd" style="cursor:pointer" onclick="togglePlan(this)">'
+      + '<div>'
+      + '<div class="card-title">' + (s.name || '—') + ' <span class="mono">' + (s.sid || '') + '</span></div>'
+      + '<div class="card-sub">' + (s.major ? s.major : '') + (s.conc ? ' · ' + s.conc : '') + (s.minor ? ' · Minor: ' + s.minor : '') + ' &nbsp;·&nbsp; ' + dtStr + '</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px">'
+      + goalPill
+      + (s.email ? '<a href="mailto:' + s.email + '" class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Email student</a>' : '')
+      + '<span style="font-size:11px;color:var(--lt)">▼</span>'
+      + '</div>'
+      + '</div>'
+      + '<div class="plan-body" style="display:none">'
+      + '<div class="card-body">'
+      + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">'
+      + '<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--lt);margin-bottom:3px">Credits now</div><div style="font-size:20px;font-weight:700;font-family:\'Lora\',serif">' + (s.creditsNow||'—') + '</div></div>'
+      + '<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--lt);margin-bottom:3px">Credits planned</div><div style="font-size:20px;font-weight:700;font-family:\'Lora\',serif">' + (s.creditsPlanned||'—') + '</div></div>'
+      + '<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--lt);margin-bottom:3px">Total</div><div style="font-size:20px;font-weight:700;font-family:\'Lora\',serif">' + (s.creditsTotal||'—') + '/120</div></div>'
+      + '</div>'
+      + (semHTML ? '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--lt);margin-bottom:10px">Course plan by semester</div>' + semHTML : '')
+      + (s.notes ? '<div style="margin-top:14px;padding:12px 14px;background:var(--cream);border-radius:7px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--lt);margin-bottom:5px">Notes for advisor</div><div style="font-size:13px;color:var(--mid);line-height:1.65;white-space:pre-wrap">' + s.notes + '</div></div>' : '')
+      + '</div>'
+      + '</div>';
+    listEl.appendChild(card);
+  });
+
+  if (subs.length === 0 && q2) {
+    listEl.innerHTML = '<div class="card"><div class="card-body" style="text-align:center;padding:30px;color:var(--lt)">No submissions match "' + q2 + '"</div></div>';
+  }
+}
+
+function togglePlan(hd) {
+  var body = hd.nextElementSibling;
+  var arrow = hd.querySelector('span:last-child');
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.textContent = open ? '▼' : '▲';
+}
+
+function clearPlans() {
+  if (!confirm('Clear all course plan submissions? This cannot be undone.')) return;
+  localStorage.removeItem('bba_plan_submissions');
+  renderPlans();
+}
 </script>
+
 </body>
 </html>
