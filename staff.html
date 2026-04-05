@@ -4,6 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mason BBA — Staff Dashboard</title>
+
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  
+  const supabase = createClient(
+    'https://uxukblmzshpqlcdlthzb.supabase.co',
+    'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
+  )
+  
+  const allowedEmails = [
+    "lkhorana@wm.edu",
+    "andy.kandell@mason.wm.edu",
+    "tcmathieux@wm.edu",
+    "terry.hinders@mason.wm.edu"
+  ]
+  
+  async function checkUser() {
+    const { data: { user } } = await supabase.auth.getUser()
+  
+    if (!user || !allowedEmails.includes(user.email)) {
+      window.location.href = "/index.html"
+    }
+  }
+  
+  checkUser()
+  </script>
+  
+  ✅ This will redirect anyone not in your small list of staff emails back to the homepage.
+  
+  If you want, I can also show a tiny addition so the page automatically shows the user’s name if they are allowed, which is nice for a staff dashboard.
+  
+  Do you want me to do that?
+
+checkUser()
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ── DESIGN TOKENS ── */
