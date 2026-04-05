@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mason BBA Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F5F0E8;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px}
+.seal{width:56px;height:56px;background:#115740;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Lora',serif;font-size:22px;font-weight:700;color:#B9975B}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#8A8A8A;margin-bottom:8px;text-align:center}
+h1{font-family:'Lora',serif;font-size:32px;font-weight:700;color:#115740;margin-bottom:6px;text-align:center}
+.sub{font-size:14px;color:#4A4A4A;margin-bottom:44px;text-align:center;max-width:420px;line-height:1.6}
+.cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:640px;width:100%}
+.card{background:#fff;border:1.5px solid #DDD8CE;border-radius:14px;padding:36px 32px;cursor:pointer;transition:all .2s;text-align:center;width:240px;text-decoration:none;display:block}
+.card:hover{border-color:#115740;box-shadow:0 8px 32px rgba(0,0,0,.12);transform:translateY(-3px)}
+.card-icon{font-size:40px;margin-bottom:14px}
+.card-title{font-family:'Lora',serif;font-size:20px;font-weight:600;color:#1C1C1C;margin-bottom:8px}
+.card-desc{font-size:12.5px;color:#8A8A8A;line-height:1.6}
+.card.staff{background:#115740;border-color:#115740}
+.card.staff .card-title,.card.staff .card-desc{color:rgba(255,255,255,.92)}
+.card.staff:hover{background:#0d4230}
+.footer{margin-top:40px;font-size:11px;color:#8A8A8A;text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="seal">W</div>
+<p class="eyebrow">Raymond A. Mason School of Business</p>
+<h1>BBA Portal</h1>
+<p class="sub">Welcome to the undergraduate business portal. Choose your view to get started.</p>
+
+<div class="cards">
+  <a href="student.html" class="card">
+    <div class="card-icon">🎓</div>
+    <div class="card-title">Student Portal</div>
+    <div class="card-desc">Look up transfer credits, search the FAQ, book advising appointments, and get answers fast.</div>
+  </a>
+  <a href="staff.html" class="card staff">
+    <div class="card-icon">🏛️</div>
+    <div class="card-title">Staff Dashboard</div>
+    <div class="card-desc">Manage FAQ escalations, review transfer credit decisions, and view advising appointments.</div>
+  </a>
+</div>
+
+<div class="footer">
+  Mason School of Business &nbsp;·&nbsp; Miller Hall Suite 2013<br>
+  bba@mason.wm.edu &nbsp;·&nbsp; Walk-in hours: Mon &amp; Wed 9am–12pm, Tue 1–3pm
+</div>
+</body>
+</html>

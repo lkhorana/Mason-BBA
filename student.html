@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mason BBA — Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="portal-header">
+  <div class="portal-header-top">
+    <div>
+      <div class="portal-wordmark">Mason School of Business — BBA Office</div>
+      <div class="portal-title">Student Portal</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <a href="staff.html" class="portal-nav-link">Staff Dashboard →</a>
+      <div class="portal-meta"><span class="dot"></span>Spring 2025</div>
+    </div>
+  </div>
+  <nav class="tab-bar">
+    <a href="student.html#home"     class="tab-btn active" id="tab-home">Home</a>
+    <a href="student.html#transfer" class="tab-btn"        id="tab-transfer">Transfer Credits</a>
+    <a href="student.html#faq"      class="tab-btn"        id="tab-faq">FAQ</a>
+    <a href="student.html#guidance" class="tab-btn"        id="tab-guidance">Guidance &amp; Advising</a>
+  </nav>
+</header>
+
+<!-- ════════════════════════════════════════════════════
+     HOME
+════════════════════════════════════════════════════ -->
+<section id="home" class="page-wrap">
+  <div class="home-grid">
+    <div>
+      <p class="page-eyebrow">Undergraduate Business Hub</p>
+      <h1 class="page-title">What's new</h1>
+      <div id="ann-container"></div>
+    </div>
+    <div>
+      <h2 class="page-title" style="font-size:18px;margin-bottom:16px">Quick links</h2>
+      <div class="ql">
+        <a href="student.html#transfer" class="qlk">Check a Transfer Credit Decision<div class="qlk-sub">360 decisions from 108 institutions on file</div></a>
+        <a href="student.html#faq"      class="qlk">Search the FAQ<div class="qlk-sub">65 answers from Blackboard + mason.wm.edu</div></a>
+        <a href="student.html#guidance" class="qlk">Book an Advising Appointment<div class="qlk-sub">4-step form — Calendly pre-filled for you</div></a>
+        <a href="mailto:bba@mason.wm.edu" class="qlk">Email the BBA Office<div class="qlk-sub">bba@mason.wm.edu</div></a>
+      </div>
+      <div class="sidebar-card" style="margin-top:16px">
+        <div class="sc-hd">Office hours</div>
+        <div class="sc-row"><span class="sc-label">Walk-in hours</span><span class="sc-val">Mon &amp; Wed 9am–12pm</span></div>
+        <div class="sc-row"><span class="sc-label"></span><span class="sc-val">Tue 1pm–3pm</span></div>
+        <div class="sc-row"><span class="sc-label">Location</span><span class="sc-val">Miller Hall Suite 2013</span></div>
+        <div class="sc-row"><span class="sc-label">Email</span><span class="sc-val" style="color:var(--blue)">bba@mason.wm.edu</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     TRANSFER CREDITS
+════════════════════════════════════════════════════ -->
+<section id="transfer" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">BBA Office</p>
+  <h1 class="page-title">Transfer Credit Lookup</h1>
+  <p class="page-sub">Check whether your course has already been reviewed. Enter your institution and course code below — results are instant if the decision is on file.</p>
+
+  <!-- STUDENT LOOKUP FORM -->
+  <div class="card">
+    <div class="card-hd">
+      <div>
+        <div class="card-title">Look up a decision</div>
+        <div class="card-sub">Decisions are valid for 3 years. Expiry flags show if your decision is approaching its limit.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="form-grid fg2">
+        <div class="fgrp">
+          <label>Your First Name <span class="required-star">*</span></label>
+          <input id="stu-fn" placeholder="e.g. Jordan">
+        </div>
+        <div class="fgrp">
+          <label>Your Last Name <span class="required-star">*</span></label>
+          <input id="stu-ln" placeholder="e.g. Smith">
+        </div>
+      </div>
+      <div class="form-grid fg2">
+        <div class="fgrp">
+          <label>Student ID <span class="required-star">*</span></label>
+          <input id="stu-id" placeholder="W00000000">
+        </div>
+        <div class="fgrp">
+          <label>W&amp;M Email <span class="required-star">*</span></label>
+          <input id="stu-email" type="email" placeholder="username@wm.edu">
+        </div>
+      </div>
+      <div class="form-grid fg2">
+        <div class="fgrp">
+          <label>Institution Name <span class="required-star">*</span></label>
+          <input id="stu-uni" placeholder="e.g. University of Virginia, ODU">
+        </div>
+        <div class="fgrp">
+          <label>Course Code <span class="required-star">*</span></label>
+          <input id="stu-code" placeholder="e.g. FIN 201, ACCT 301, MKTG 303">
+        </div>
+      </div>
+      <div class="form-grid fg1">
+        <div class="fgrp">
+          <label>Syllabus Link <span class="required-star">*</span> — required for new requests</label>
+          <input id="stu-syllabus" placeholder="Paste a direct URL to your course syllabus">
+          <span class="field-note">Faculty cannot complete a review without the syllabus. If you cannot find it online, attach the PDF when you submit the official form below.</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-green btn-lg" onclick="stuLookup()">Check Database</button>
+        <button class="btn btn-ghost" onclick="stuReset()">Clear</button>
+      </div>
+      <div id="stu-result"></div>
+    </div>
+  </div>
+
+  <!-- FULL TABLE -->
+  <div class="card" style="margin-top:8px">
+    <div class="card-hd">
+      <div>
+        <div class="card-title">Browse all 360 decisions</div>
+        <div class="card-sub">From 108 institutions — search or filter below</div>
+      </div>
+    </div>
+    <div style="padding:14px 18px 10px">
+      <div class="filter-row">
+        <div class="fi-wrap">
+          <span class="fi-icon">&#9906;</span>
+          <input class="fi-input" id="tc-search" placeholder="Search institution or course…" oninput="tcRefresh()">
+        </div>
+        <select class="fi-select" id="tc-flag" onchange="tcRefresh()">
+          <option value="all">All statuses</option>
+          <option value="EXPIRED">Expired</option>
+          <option value="EXPIRING SOON (<90 days)">Expiring soon</option>
+          <option value="Active">Active</option>
+        </select>
+        <select class="fi-select" id="tc-equiv" onchange="tcRefresh()">
+          <option value="all">All equivalencies</option>
+          <option value="equiv">Approved</option>
+          <option value="not">Not equivalent</option>
+        </select>
+        <span class="fi-count" id="tc-count">Showing all 360</span>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Institution</th>
+            <th>Course</th>
+            <th>W&amp;M Equivalent</th>
+            <th>Expires</th>
+            <th>Status</th>
+            <th>Syllabus</th>
+          </tr>
+        </thead>
+        <tbody id="tc-body"></tbody>
+      </table>
+      <div id="tc-empty" class="no-results" style="display:none">
+        <h3>No results</h3><p>Try different keywords or clear your filters.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="card">
+    <div class="card-hd"><div class="card-title">How the transfer credit process works</div></div>
+    <div class="card-body">
+      <div class="steps-list">
+        <div class="step-row"><div class="step-num">1</div><div class="step-body"><h4>Submit a request</h4><p>Use the official Microsoft Form and attach your course syllabus. The BBA office reviews it first.</p></div></div>
+        <div class="step-row"><div class="step-num">2a</div><div class="step-body"><h4>Decision already on file</h4><p>If reviewed within the last 3 years, the BBA office emails you directly with the outcome.</p></div></div>
+        <div class="step-row"><div class="step-num">2b</div><div class="step-body"><h4>New faculty review needed</h4><p>Your syllabus is sent to the relevant W&M department head. Allow 2–4 weeks for a response.</p></div></div>
+        <div class="step-row"><div class="step-num">3</div><div class="step-body"><h4>Decision recorded</h4><p>The outcome is added to the BBA database and shared with the Registrar and Advising Center.</p></div></div>
+      </div>
+      <div class="btn-row" style="margin-top:16px">
+        <a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u" target="_blank" class="btn btn-green">Submit Official Transfer Request Form</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     FAQ
+════════════════════════════════════════════════════ -->
+<section id="faq" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">Knowledge Base</p>
+  <h1 class="page-title">Frequently Asked Questions</h1>
+  <p class="page-sub">65 answers sourced from the W&M Undergraduate Business Hub (Blackboard) and mason.wm.edu. Search by keyword or browse by category.</p>
+
+  <div class="faq-search-wrap">
+    <span class="faq-search-icon">&#9906;</span>
+    <input type="text" id="faq-search" placeholder='Search 65 answers — try "block semester", "FUSE", "Bloomberg", "DegreeWorks"…' oninput="faqRefresh()">
+    <span class="faq-search-count" id="faq-count"></span>
+  </div>
+
+  <div class="chips" id="faq-chips">
+    <div class="chip active" onclick="faqSetCat('all',this)">All (65)</div>
+    <div class="chip" onclick="faqSetCat('Admissions',this)">Admissions (8)</div>
+    <div class="chip" onclick="faqSetCat('Advising',this)">Advising (15)</div>
+    <div class="chip" onclick="faqSetCat('Registration',this)">Registration (8)</div>
+    <div class="chip" onclick="faqSetCat('Graduation',this)">Graduation (5)</div>
+    <div class="chip" onclick="faqSetCat('Fees',this)">Fees &amp; Scholarships (4)</div>
+    <div class="chip" onclick="faqSetCat('Majors &amp; Minors',this)">Majors &amp; Minors (15)</div>
+    <div class="chip" onclick="faqSetCat('Transfer Credits',this)">Transfer Credits (5)</div>
+    <div class="chip" onclick="faqSetCat('Careers &amp; Resources',this)">Careers &amp; Resources (5)</div>
+  </div>
+
+  <div id="faq-container"></div>
+
+  <div style="text-align:center;margin-top:22px;padding:20px;background:var(--cream-dk);border-radius:var(--r)">
+    <p style="font-size:13px;color:var(--mid);margin-bottom:12px">Still have a question? Reach out or book an appointment.</p>
+    <div class="btn-row" style="justify-content:center">
+      <a href="mailto:bba@mason.wm.edu" class="btn btn-green">Email bba@mason.wm.edu</a>
+      <a href="student.html#guidance"   class="btn btn-ghost">Book an Appointment</a>
+    </div>
+  </div>
+
+  <p style="font-size:11px;color:var(--lt);text-align:center;margin-top:14px;line-height:1.6">
+    All answers sourced from the W&M Undergraduate Business Hub (Blackboard) and mason.wm.edu/undergraduate.<br>
+    Answers are updated by BBA staff — changes go live within 60 seconds.
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     GUIDANCE & ADVISING — 4-STEP FORM
+════════════════════════════════════════════════════ -->
+<section id="guidance" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">BBA Office</p>
+  <h1 class="page-title">Book an Advising Appointment</h1>
+  <p class="page-sub">Complete the 4-step form below. Your advisor will receive a structured summary before your meeting so you can make the most of your time together.</p>
+
+  <div class="gw">
+    <!-- PROGRESS BAR -->
+    <div class="gw-top">
+      <p class="gw-eyebrow">Mason School of Business — BBA Office</p>
+      <p class="gw-title">Student Advising Portal</p>
+      <div class="ps-row">
+        <div class="ps active" id="gps-1"><div class="ps-num">1</div><div class="ps-lbl">Your info</div></div>
+        <div class="ps"        id="gps-2"><div class="ps-num">2</div><div class="ps-lbl">Topic &amp; time</div></div>
+        <div class="ps"        id="gps-3"><div class="ps-num">3</div><div class="ps-lbl">Your request</div></div>
+        <div class="ps"        id="gps-4"><div class="ps-num">4</div><div class="ps-lbl">Confirm &amp; book</div></div>
+      </div>
+    </div>
+
+    <div class="gw-body">
+
+      <!-- STEP 1 — Your info -->
+      <div class="gs active" id="gstep-1">
+        <h2 class="gs-title">Your information</h2>
+        <p class="gs-sub">This is attached to your meeting request so your advisor can prepare in advance.</p>
+        <div class="form-grid fg2">
+          <div class="fgrp"><label>First Name <span class="required-star">*</span></label><input id="g-fn" placeholder="e.g. Jordan"></div>
+          <div class="fgrp"><label>Last Name <span class="required-star">*</span></label><input id="g-ln" placeholder="e.g. Smith"></div>
+        </div>
+        <div class="form-grid fg2">
+          <div class="fgrp"><label>Student ID <span class="required-star">*</span></label><input id="g-id" placeholder="W00000000"><span class="field-note">Your W&M Banner student ID number</span></div>
+          <div class="fgrp"><label>W&amp;M Email <span class="required-star">*</span></label><input id="g-email" type="email" placeholder="username@wm.edu"></div>
+        </div>
+        <div class="form-grid fg2">
+          <div class="fgrp">
+            <label>Major / Concentration <span class="required-star">*</span></label>
+            <select id="g-major">
+              <option value="">Select your major</option>
+              <option>Accounting</option>
+              <option>Business Analytics — Data Science</option>
+              <option>Business Analytics — Supply Chain</option>
+              <option>Finance</option>
+              <option>Marketing</option>
+              <option>Business Administration Minor (only)</option>
+              <option>Pre-Major (not yet admitted)</option>
+              <option>Undecided</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Graduation Term <span class="required-star">*</span></label>
+            <select id="g-grad">
+              <option value="">Select graduation term</option>
+              <option>Spring 2025</option>
+              <option>Fall 2025</option>
+              <option>Spring 2026</option>
+              <option>Fall 2026</option>
+              <option>Spring 2027</option>
+              <option>Fall 2027</option>
+              <option>Spring 2028</option>
+              <option>Fall 2028</option>
+            </select>
+          </div>
+        </div>
+        <div class="gs-foot">
+          <span></span>
+          <button class="btn btn-blue btn-lg" onclick="gNext(1)">Continue &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 2 — Topic & time -->
+      <div class="gs" id="gstep-2">
+        <h2 class="gs-title">Topic &amp; preferred time</h2>
+        <p class="gs-sub">Select the main reason for your appointment. You can add more detail in the next step.</p>
+        <div class="topic-grid">
+          <div class="topic-card" onclick="gSelectTopic(this,'Admissions / Application Requirements')"><h4>Admissions &amp; Application</h4><p>Requirements, timeline, eligibility, reapplying</p></div>
+          <div class="topic-card" onclick="gSelectTopic(this,'Course Planning & Registration')"><h4>Course Planning &amp; Registration</h4><p>Scheduling, overrides, DegreeWorks, prerequisites</p></div>
+          <div class="topic-card" onclick="gSelectTopic(this,'Transfer Credit Evaluation')"><h4>Transfer Credit Evaluation</h4><p>Course equivalency, faculty review, study abroad credits</p></div>
+          <div class="topic-card" onclick="gSelectTopic(this,'Pass/Fail Request')"><h4>Pass / Fail Request</h4><p>Grading option changes, deadlines, eligibility</p></div>
+          <div class="topic-card" onclick="gSelectTopic(this,'Graduation Planning & Timeline')"><h4>Graduation Planning</h4><p>Credit audit, commencement, diploma, early graduation</p></div>
+          <div class="topic-card" onclick="gSelectTopic(this,'Study Abroad Planning')"><h4>Study Abroad</h4><p>Reves Center, WU Vienna exchange, course approvals</p></div>
+          <div class="topic-card" onclick="gSelectTopic(this,'Major / Concentration Change')"><h4>Major / Concentration Change</h4><p>Switching focus, adding a concentration, double counting</p></div>
+          <div class="topic-card" onclick="gSelectTopic(this,'Other')"><h4>Other</h4><p>Anything not listed above</p></div>
+        </div>
+        <div class="form-grid fg3">
+          <div class="fgrp">
+            <label>Preferred Day</label>
+            <select id="g-day">
+              <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+              <option>Thursday</option><option>Friday</option><option>Any day</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Preferred Time</label>
+            <select id="g-time">
+              <option>Morning (9am–12pm)</option>
+              <option>Afternoon (1pm–4pm)</option>
+              <option>Late afternoon (4–5pm)</option>
+              <option>No preference</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Meeting Format</label>
+            <select id="g-format">
+              <option>In-Person (Miller Hall)</option>
+              <option>Zoom / Virtual</option>
+              <option>Walk-In Hours</option>
+              <option>No preference</option>
+            </select>
+          </div>
+        </div>
+        <div class="gs-foot">
+          <button class="btn btn-ghost" onclick="gBack(2)">&larr; Back</button>
+          <button class="btn btn-blue btn-lg" onclick="gNext(2)">Continue &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 — Your request -->
+      <div class="gs" id="gstep-3">
+        <h2 class="gs-title">Describe your situation</h2>
+        <p class="gs-sub">A few sentences is enough — this helps your advisor come prepared. You don't need to write an essay.</p>
+        <div class="form-grid fg1">
+          <div class="fgrp">
+            <label>What's going on? <span class="required-star">*</span></label>
+            <textarea id="g-desc" style="min-height:110px" placeholder="e.g. I have 45 credits completed with ECON 101, 102 and BUAD 203 done. I'm hoping to apply to the business school this fall and want to confirm my timeline and whether my study abroad credits from Florence will count toward my total…"></textarea>
+          </div>
+        </div>
+        <div class="form-grid fg1">
+          <div class="fgrp">
+            <label>Attachments or links <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+            <input id="g-attach" placeholder="e.g. link to your unofficial transcript, DegreeWorks screenshot, syllabus URL">
+          </div>
+        </div>
+        <div class="gs-foot">
+          <button class="btn btn-ghost" onclick="gBack(3)">&larr; Back</button>
+          <button class="btn btn-blue btn-lg" onclick="gNext(3)">Review &amp; confirm &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 4 — Confirm & book -->
+      <div class="gs" id="gstep-4">
+        <h2 class="gs-title">Confirm your request</h2>
+        <p class="gs-sub">Review the summary below. When you're ready, open Calendly to select your time slot. Your advisor receives this summary before the meeting.</p>
+        <div class="sum-block" id="g-sum"></div>
+        <div class="cal-cta">
+          <div>
+            <h4>Open Calendly to choose a time</h4>
+            <p>Your name, email, student ID, and topic are pre-filled. Just pick a slot.</p>
+          </div>
+          <button class="cal-btn" onclick="gOpenCal()">Schedule Now &rarr;</button>
+        </div>
+        <p style="font-size:12px;color:var(--lt);margin-top:12px;line-height:1.6">
+          Bring any attachments to the appointment or email them to bba@mason.wm.edu in advance.<br>
+          Walk-in hours: Mon &amp; Wed 9am–12pm, Tue 1–3pm · Miller Hall Suite 2013.
+        </p>
+        <div class="gs-foot">
+          <button class="btn btn-ghost" onclick="gBack(4)">&larr; Edit request</button>
+          <button class="btn btn-green" onclick="gReset()">Start a new request</button>
+        </div>
+      </div>
+
+    </div><!-- /gw-body -->
+  </div><!-- /gw -->
+</section>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── SCRIPTS ── -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+// ── TAB ROUTING ──────────────────────────────────────────────────────────────
+const TABS = ['home','transfer','faq','guidance'];
+
+function showTab(id) {
+  TABS.forEach(t => {
+    const sec = document.getElementById(t);
+    const btn = document.getElementById('tab-' + t);
+    if (sec) sec.style.display = t === id ? 'block' : 'none';
+    if (btn) btn.classList.toggle('active', t === id);
+  });
+  // init content on first show
+  if (id === 'home')     renderAnnouncements('ann-container');
+  if (id === 'transfer') tcRefresh();
+  if (id === 'faq')      faqRefresh();
+  if (id === 'guidance') gSetStep(1);
+  // update URL hash without scroll jump
+  history.replaceState(null, '', '#' + id);
+}
+
+// ── FAQ ──────────────────────────────────────────────────────────────────────
+let faqActiveCat = 'all';
+function faqRefresh() {
+  const s = document.getElementById('faq-search').value;
+  renderFAQ('faq-container','faq-count', FAQ_DATA, s, faqActiveCat);
+}
+function faqSetCat(cat, el) {
+  faqActiveCat = cat;
+  document.getElementById('faq-search').value = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  faqRefresh();
+}
+
+// ── TRANSFER CREDITS ─────────────────────────────────────────────────────────
+function tcRefresh() {
+  renderTCTable(
+    'tc-body','tc-empty','tc-count',
+    TC_DATA,
+    document.getElementById('tc-search').value,
+    document.getElementById('tc-flag').value,
+    document.getElementById('tc-equiv').value
+  );
+}
+
+// ── STUDENT LOOKUP ───────────────────────────────────────────────────────────
+function stuLookup() {
+  const fn  = document.getElementById('stu-fn').value.trim();
+  const ln  = document.getElementById('stu-ln').value.trim();
+  const sid = document.getElementById('stu-id').value.trim();
+  const em  = document.getElementById('stu-email').value.trim();
+  const uni = document.getElementById('stu-uni').value.trim();
+  const cod = document.getElementById('stu-code').value.trim().toUpperCase();
+  const syl = document.getElementById('stu-syllabus').value.trim();
+  const el  = document.getElementById('stu-result');
+
+  if (!fn || !ln || !sid || !em) { alert('Please fill in your name, student ID, and email.'); return; }
+  if (!uni || !cod) { alert('Please enter the institution name and course code.'); return; }
+
+  const match = TC_DATA.find(r =>
+    r.uni.toLowerCase().includes(uni.toLowerCase()) &&
+    r.course.toUpperCase().includes(cod.split(' ')[0])
+  );
+
+  if (match) {
+    const days = parseInt(match.days);
+    const exp  = days < 0;
+    const soon = days >= 0 && days <= 90;
+    const mo6  = days > 90 && days <= 180;
+    const notEq = match.equiv === 'Not equivalent';
+
+    let expiryNote = '';
+    if (exp) {
+      expiryNote = `<div class="alert alert-red" style="margin-top:12px"><strong>This decision has expired.</strong> The 3-year validity window has passed. Please resubmit using the official form below and attach your current syllabus.</div>`;
+    } else if (soon) {
+      expiryNote = `<div class="alert alert-warn" style="margin-top:12px"><strong>Expiring soon</strong> — this decision expires on ${match.expires} (within 90 days). It is currently valid. The BBA office will be notified to plan a renewal.</div>`;
+    } else if (mo6) {
+      expiryNote = `<div class="alert alert-warn" style="margin-top:12px">This decision expires on ${match.expires} (within 6 months). It is currently valid.</div>`;
+    }
+
+    const cls = exp ? 'r-exp' : notEq ? 'r-no' : 'r-ok';
+    const hdg = exp ? 'Decision Found — Expired' : notEq ? 'Decision Found — Not Equivalent' : 'Decision Found — Approved';
+
+    el.innerHTML = `<div class="result ${cls}">
+      <h3>${hdg}</h3>
+      <p>
+        <strong>Institution:</strong> ${esc(match.uni)}<br>
+        <strong>Course:</strong> ${esc(match.course)}<br>
+        <strong>W&amp;M Equivalent:</strong> ${notEq ? '<em>Not equivalent to any Mason BBA course</em>' : esc(match.equiv)}<br>
+        <strong>Expiry date:</strong> ${match.expires} &nbsp; ${flagPill(days)}
+        ${match.notes && !match.notes.startsWith('http') ? '<br><strong>Notes:</strong> ' + esc(match.notes) : ''}
+      </p>
+      ${expiryNote}
+      <div class="result-acts">
+        ${exp || notEq
+          ? `<a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u" target="_blank" class="btn btn-green btn-sm">Submit New Request</a>`
+          : `<button class="btn btn-ghost btn-sm" onclick="window.open('mailto:bba@mason.wm.edu?subject=Transfer Credit Confirmation — ${encodeURIComponent(match.course)}')">Email BBA Office</button>`}
+      </div>
+    </div>`;
+  } else {
+    el.innerHTML = `<div class="result r-rev">
+      <h3>Not in Database — Faculty Review Required</h3>
+      <p>
+        This course has no decision on file in the last 3 years. A new faculty review will be needed.<br>
+        <strong>Timeline:</strong> 2–4 weeks after your syllabus is received.
+        ${syl ? `<br><strong>Your syllabus link:</strong> <a href="${esc(syl)}" target="_blank" style="color:var(--blue)">${esc(syl)}</a>` : ''}
+      </p>
+      ${!syl ? '<div class="alert alert-warn" style="margin-top:10px"><strong>Syllabus required.</strong> You must include your course syllabus when submitting the form — faculty cannot review without it.</div>' : ''}
+      <div class="result-acts">
+        <a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u" target="_blank" class="btn btn-green btn-sm">Submit Official Request Form</a>
+        ${syl ? `<a href="${esc(syl)}" target="_blank" class="btn btn-ghost btn-sm">Open Your Syllabus</a>` : ''}
+      </div>
+    </div>`;
+  }
+}
+
+function stuReset() {
+  ['stu-fn','stu-ln','stu-id','stu-email','stu-uni','stu-code','stu-syllabus'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('stu-result').innerHTML = '';
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(function init() {
+  const hash = location.hash.replace('#','') || 'home';
+  const tab  = TABS.includes(hash) ? hash : 'home';
+  showTab(tab);
+
+  // Wire tab clicks (plain anchor clicks handled by showTab via hashchange)
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = this.getAttribute('href').split('#')[1];
+      showTab(target);
+    });
+  });
+
+  // Also handle quick-link anchors
+  document.querySelectorAll('a[href^="student.html#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      if (window.location.pathname.includes('student.html') || window.location.pathname === '/') {
+        e.preventDefault();
+        showTab(this.getAttribute('href').split('#')[1]);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

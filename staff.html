@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mason BBA — Staff Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Staff-only extras */
+.esc-q   { color:var(--text);line-height:1.45;max-width:340px }
+.esc-q em{ font-style:normal;font-size:11.5px;color:var(--lt);display:block;margin-top:2px }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="portal-header">
+  <div class="portal-header-top">
+    <div>
+      <div class="portal-wordmark">Mason School of Business — BBA Office</div>
+      <div class="portal-title">Staff Operations Dashboard</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <a href="student.html" class="portal-nav-link">Student Portal →</a>
+      <div class="portal-meta"><span class="dot"></span>Spring 2025 &nbsp;|&nbsp; BBA Advisor</div>
+    </div>
+  </div>
+  <nav class="tab-bar">
+    <a href="staff.html#overview"   class="tab-btn active" id="tab-overview">Overview</a>
+    <a href="staff.html#transfer"   class="tab-btn"        id="tab-transfer">Transfer Credits</a>
+    <a href="staff.html#faq"        class="tab-btn"        id="tab-faq">FAQ Escalations</a>
+    <a href="staff.html#advising"   class="tab-btn"        id="tab-advising">Advising Appointments</a>
+  </nav>
+</header>
+
+<!-- ════════════════════════════════════════════════════
+     OVERVIEW
+════════════════════════════════════════════════════ -->
+<section id="overview" class="page-wrap">
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-lbl">Unresolved escalations</div><div class="stat-val red" id="s-unresolved">6</div><div class="stat-meta urgent" id="s-overdue">2 overdue</div></div>
+    <div class="stat-card"><div class="stat-lbl">Transfer decisions on file</div><div class="stat-val">360</div><div class="stat-meta red">12 expired — review needed</div></div>
+    <div class="stat-card"><div class="stat-lbl">Upcoming appointments</div><div class="stat-val">4</div><div class="stat-meta">Next 5 business days</div></div>
+    <div class="stat-card"><div class="stat-lbl">Avg. turnaround</div><div class="stat-val amber">1.4d</div><div class="stat-meta">Transfer decisions</div></div>
+  </div>
+
+  <div class="home-grid">
+    <div>
+      <p class="page-eyebrow">Undergraduate Business Hub</p>
+      <h2 class="page-title" style="font-size:20px;margin-bottom:16px">Recent Announcements</h2>
+      <div id="ann-container"></div>
+    </div>
+    <div>
+      <h2 class="page-title" style="font-size:18px;margin-bottom:14px">Quick actions</h2>
+      <div class="ql">
+        <a href="staff.html#faq"      class="qlk">Manage FAQ Escalations<div class="qlk-sub">6 unresolved — 2 overdue</div></a>
+        <a href="staff.html#transfer" class="qlk">Review Transfer Credits<div class="qlk-sub">12 expired decisions need re-review</div></a>
+        <a href="staff.html#advising" class="qlk">View Advising Appointments<div class="qlk-sub">4 this week with pre-loaded summaries</div></a>
+        <a href="mailto:bba@mason.wm.edu" class="qlk">Email BBA Office<div class="qlk-sub">bba@mason.wm.edu</div></a>
+      </div>
+
+      <div class="sidebar-card" style="margin-top:16px">
+        <div class="sc-hd">Workflow health — this week</div>
+        <div class="sc-row"><span class="sc-label">Transfer credit</span><span>Received 18 · Resolved 10 · <span style="color:var(--amber);font-weight:600">8 pending</span></span></div>
+        <div class="sc-row"><span class="sc-label">Course guidance</span><span>Received 9 · Resolved 8 · 1 pending</span></div>
+        <div class="sc-row"><span class="sc-label">Pass/fail requests</span><span>Received 5 · Resolved 5</span></div>
+        <div class="sc-row"><span class="sc-label">Graduation planning</span><span>Received 7 · Resolved 4 · <span style="color:var(--amber);font-weight:600">3 pending</span></span></div>
+        <div class="sc-row"><span class="sc-label">FAQ escalations</span><span>Received 11 · Resolved 5 · <span style="color:var(--red);font-weight:600">6 open</span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     TRANSFER CREDITS (STAFF)
+════════════════════════════════════════════════════ -->
+<section id="transfer" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">BBA Office</p>
+  <h1 class="page-title">Transfer Credit Database</h1>
+  <p class="page-sub">360 decisions from 108 institutions. Expiry flags calculated automatically. Update decisions, dates, and syllabus links in the Google Sheet — changes appear within 60 seconds. When a student submits their syllabus URL, paste it into the <strong>notes</strong> column for that row and it will show as "Student submitted" instantly.</p>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-lbl">Total on file</div><div class="stat-val">360</div><div class="stat-meta">108 institutions</div></div>
+    <div class="stat-card"><div class="stat-lbl">Expired</div><div class="stat-val red">12</div><div class="stat-meta urgent">New faculty review required</div></div>
+    <div class="stat-card"><div class="stat-lbl">Expiring &lt;6 months</div><div class="stat-val amber">0</div><div class="stat-meta">Monitor closely</div></div>
+    <div class="stat-card"><div class="stat-lbl">Active</div><div class="stat-val green">348</div><div class="stat-meta">Valid and current</div></div>
+  </div>
+
+  <div class="alert alert-info">
+    <strong>Syllabus workflow:</strong> When a student submits their syllabus URL with their request, paste that URL into the <strong>notes</strong> column in the Google Sheet transfer_credits tab. The portal will immediately show "Student submitted ↗" as a direct link instead of the Google search fallback.
+  </div>
+
+  <div style="padding:0 0 10px">
+    <div class="filter-row">
+      <div class="fi-wrap">
+        <span class="fi-icon">&#9906;</span>
+        <input class="fi-input" id="tc-search" placeholder="Search by institution, course, or W&M equivalent…" oninput="tcRefresh()">
+      </div>
+      <select class="fi-select" id="tc-flag" onchange="tcRefresh()">
+        <option value="all">All statuses</option>
+        <option value="EXPIRED">Expired only</option>
+        <option value="EXPIRING SOON (<90 days)">Expiring soon</option>
+        <option value="Active">Active only</option>
+      </select>
+      <select class="fi-select" id="tc-equiv" onchange="tcRefresh()">
+        <option value="all">All equivalencies</option>
+        <option value="equiv">Approved</option>
+        <option value="not">Not equivalent</option>
+      </select>
+      <span class="fi-count" id="tc-count">Showing all 360</span>
+      <button class="view-all" onclick="exportTCCSV(TC_DATA)">Export CSV ↓</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <div><div class="card-title">Transfer credit decisions</div><div class="card-sub">Expired records shown first · Syllabus column: green = student submitted, blue = Google search fallback</div></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Institution</th>
+            <th>Course</th>
+            <th>W&amp;M Equivalent</th>
+            <th>Expires</th>
+            <th>Status</th>
+            <th>Syllabus / Student Link</th>
+          </tr>
+        </thead>
+        <tbody id="tc-body"></tbody>
+      </table>
+      <div id="tc-empty" class="no-results" style="display:none"><h3>No results</h3><p>Try clearing your filters.</p></div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Transfer credit process — staff reference</div></div>
+    <div class="card-body">
+      <div class="steps-list">
+        <div class="step-row"><div class="step-num">1</div><div class="step-body"><h4>Student submits request via Microsoft Form</h4><p>They include their institution, course code, and syllabus link. BBA office reviews it first.</p></div></div>
+        <div class="step-row"><div class="step-num">2a</div><div class="step-body"><h4>Already on file (within 3 years)</h4><p>Check this database. Email the student the decision directly. No faculty review needed.</p></div></div>
+        <div class="step-row"><div class="step-num">2b</div><div class="step-body"><h4>Not on file — initiate faculty review</h4><p>Forward the syllabus to the relevant W&M department head. Follow up in 2–4 weeks.</p></div></div>
+        <div class="step-row"><div class="step-num">3</div><div class="step-body"><h4>Record the decision</h4><p>Add or update the row in the Google Sheet transfer_credits tab. Set the expires date to 3 years from today. Paste the student's syllabus URL into the notes column.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     FAQ ESCALATIONS
+════════════════════════════════════════════════════ -->
+<section id="faq" class="page-wrap" style="display:none">
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-lbl">Unresolved this week</div><div class="stat-val red" id="statUnresolved">6</div><div class="stat-meta urgent" id="statOverdue">2 overdue (&gt;3 days)</div></div>
+    <div class="stat-card"><div class="stat-lbl">Resolved this week</div><div class="stat-val green" id="statResolved">5</div><div class="stat-meta">Avg. 1.1 days to close</div></div>
+    <div class="stat-card"><div class="stat-lbl">Added to FAQ answers</div><div class="stat-val" id="statAdded">3</div><div class="stat-meta">Turned into permanent answers</div></div>
+    <div class="stat-card"><div class="stat-lbl">Top category this week</div><div class="stat-val amber" style="font-size:20px;margin-top:4px">Admissions</div><div class="stat-meta">4 of 11 escalations</div></div>
+  </div>
+
+  <div class="filter-row">
+    <div class="fi-wrap">
+      <span class="fi-icon">&#9906;</span>
+      <input class="fi-input" id="esc-search" placeholder="Search questions or categories…" oninput="escRefresh()">
+    </div>
+    <select class="fi-select" id="esc-status" onchange="escRefresh()">
+      <option value="all">All statuses</option>
+      <option value="pending">Pending</option>
+      <option value="overdue">Overdue</option>
+      <option value="resolved">Resolved</option>
+    </select>
+    <select class="fi-select" id="esc-cat" onchange="escRefresh()">
+      <option value="all">All categories</option>
+      <option value="Admissions">Admissions</option>
+      <option value="Registration">Registration</option>
+      <option value="Fees">Fees</option>
+      <option value="Advising">Advising</option>
+      <option value="Graduation">Graduation</option>
+      <option value="Transfer credits">Transfer credits</option>
+    </select>
+    <span class="fi-count" id="esc-count">Showing 11 escalations</span>
+  </div>
+
+  <div class="two-col">
+    <!-- ESCALATIONS TABLE -->
+    <div class="card">
+      <div class="card-hd">
+        <div><div class="card-title">FAQ escalations</div><div class="card-sub">Questions the portal could not auto-resolve — each needs a response</div></div>
+        <button class="view-all" onclick="escExport()">Export CSV ↓</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Student</th><th>Question</th><th>Category</th><th>Received</th><th>Status</th><th></th></tr></thead>
+          <tbody id="esc-body"></tbody>
+        </table>
+        <div id="esc-empty" class="no-results" style="display:none"><h3>No escalations match your filters</h3><p>Try clearing the search or status filter.</p></div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+      <div class="sidebar-card">
+        <div class="sc-hd">Requests by category this week</div>
+        <div class="sc-row"><span class="sc-label">Admissions</span><span class="sc-val red">4</span></div>
+        <div class="sc-row"><span class="sc-label">Registration</span><span class="sc-val">2</span></div>
+        <div class="sc-row"><span class="sc-label">Fees</span><span class="sc-val amber">2</span></div>
+        <div class="sc-row"><span class="sc-label">Advising</span><span class="sc-val">1</span></div>
+        <div class="sc-row"><span class="sc-label">Graduation</span><span class="sc-val">1</span></div>
+        <div class="sc-row"><span class="sc-label">Transfer credits</span><span class="sc-val">1</span></div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-hd">Resolution workflow</div>
+        <div style="padding:14px 16px;font-size:11.5px;color:var(--lt);line-height:1.7">
+          <div style="display:flex;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-weight:700;flex-shrink:0">1.</span>Click <strong style="color:var(--mid)">Respond</strong> on any escalation</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-weight:700;flex-shrink:0">2.</span>Write a plain-text answer (2–4 sentences)</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-weight:700;flex-shrink:0">3.</span>Check "Add to FAQ" to push it to the Google Sheet</div>
+          <div style="display:flex;gap:8px"><span style="color:var(--green);font-weight:700;flex-shrink:0">4.</span>Send — student notified, status → Resolved</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ KNOWLEDGE BASE -->
+  <div style="margin-top:30px;padding-top:24px;border-top:2px solid var(--border)">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+      <div>
+        <h2 style="font-family:'Lora',serif;font-size:17px;font-weight:600;color:var(--text)">FAQ Knowledge Base</h2>
+        <p style="font-size:11.5px;color:var(--lt);margin-top:2px">65 answers sourced from Blackboard and mason.wm.edu — the full set students see on the portal</p>
+      </div>
+      <span style="font-size:12px;color:var(--lt)" id="kb-meta">65 answers · 8 categories</span>
+    </div>
+
+    <div class="faq-search-wrap">
+      <span class="faq-search-icon">&#9906;</span>
+      <input type="text" id="kb-search" placeholder='Search all 65 answers — try "block semester", "FUSE", "Bloomberg", "DegreeWorks"…' oninput="kbRefresh()">
+      <span class="faq-search-count" id="kb-count"></span>
+    </div>
+    <div class="chips" id="kb-chips">
+      <div class="chip active" onclick="kbSetCat('all',this)">All (65)</div>
+      <div class="chip" onclick="kbSetCat('Admissions',this)">Admissions (8)</div>
+      <div class="chip" onclick="kbSetCat('Advising',this)">Advising (15)</div>
+      <div class="chip" onclick="kbSetCat('Registration',this)">Registration (8)</div>
+      <div class="chip" onclick="kbSetCat('Graduation',this)">Graduation (5)</div>
+      <div class="chip" onclick="kbSetCat('Fees',this)">Fees &amp; Scholarships (4)</div>
+      <div class="chip" onclick="kbSetCat('Majors &amp; Minors',this)">Majors &amp; Minors (15)</div>
+      <div class="chip" onclick="kbSetCat('Transfer Credits',this)">Transfer Credits (5)</div>
+      <div class="chip" onclick="kbSetCat('Careers &amp; Resources',this)">Careers &amp; Resources (5)</div>
+    </div>
+    <div id="kb-container"></div>
+    <p style="font-size:11px;color:var(--lt);text-align:center;margin-top:14px">Update any answer via the Google Sheet (Sheet1, column B) — changes appear on the student portal within 60 seconds.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     ADVISING APPOINTMENTS
+════════════════════════════════════════════════════ -->
+<section id="advising" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">BBA Office</p>
+  <h1 class="page-title">Advising Appointments</h1>
+  <p class="page-sub">Structured summaries submitted by students via the 4-step booking form. Advisors receive full context before each meeting — no additional data entry required.</p>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-lbl">This week</div><div class="stat-val">4</div><div class="stat-meta">Confirmed appointments</div></div>
+    <div class="stat-card"><div class="stat-lbl">Most common topic</div><div class="stat-val amber" style="font-size:18px;margin-top:4px">Course Planning</div><div class="stat-meta">2 of 4 this week</div></div>
+    <div class="stat-card"><div class="stat-lbl">Pending summaries</div><div class="stat-val">0</div><div class="stat-meta green">All reviewed</div></div>
+    <div class="stat-card"><div class="stat-lbl">Via Zoom</div><div class="stat-val">2</div><div class="stat-meta">In-person: 2</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <div><div class="card-title">Appointment summaries — this week</div><div class="card-sub">Click View Summary to see the student's full description before the meeting</div></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Student ID</th>
+            <th>W&amp;M Email</th>
+            <th>Major</th>
+            <th>Grad Term</th>
+            <th>Topic</th>
+            <th>Preferred Time</th>
+            <th>Format</th>
+            <th>Submitted</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="appt-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- APPOINTMENT DETAIL MODAL -->
+  <div class="modal-overlay" id="apptModal" onclick="closeApptModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-top">
+        <div><div class="modal-title" id="appt-modal-title">Appointment Summary</div><div class="modal-meta" id="appt-modal-meta"></div></div>
+        <button class="modal-close" onclick="closeApptModal()">&#215;</button>
+      </div>
+      <div class="modal-body" id="appt-modal-body"></div>
+    </div>
+  </div>
+
+  <hr>
+  <!-- GUIDANCE FORM FOR STAFF PREVIEW -->
+  <div style="margin-top:4px">
+    <p class="page-eyebrow" style="margin-bottom:8px">Student-facing booking form preview</p>
+    <p style="font-size:13px;color:var(--lt);margin-bottom:16px;line-height:1.6">This is the 4-step form students use to book appointments. Each submission generates a structured summary that populates the table above.</p>
+    <div class="gw">
+      <div class="gw-top">
+        <p class="gw-eyebrow">Mason School of Business — BBA Office</p>
+        <p class="gw-title">Student Advising Portal</p>
+        <div class="ps-row">
+          <div class="ps active" id="gps-1"><div class="ps-num">1</div><div class="ps-lbl">Your info</div></div>
+          <div class="ps"        id="gps-2"><div class="ps-num">2</div><div class="ps-lbl">Topic &amp; time</div></div>
+          <div class="ps"        id="gps-3"><div class="ps-num">3</div><div class="ps-lbl">Your request</div></div>
+          <div class="ps"        id="gps-4"><div class="ps-num">4</div><div class="ps-lbl">Confirm &amp; book</div></div>
+        </div>
+      </div>
+      <div class="gw-body">
+        <div class="gs active" id="gstep-1">
+          <h2 class="gs-title">Your information</h2>
+          <p class="gs-sub">This is attached to your meeting request so your advisor can prepare in advance.</p>
+          <div class="form-grid fg2">
+            <div class="fgrp"><label>First Name <span class="required-star">*</span></label><input id="g-fn" placeholder="e.g. Jordan"></div>
+            <div class="fgrp"><label>Last Name <span class="required-star">*</span></label><input id="g-ln" placeholder="e.g. Smith"></div>
+          </div>
+          <div class="form-grid fg2">
+            <div class="fgrp"><label>Student ID <span class="required-star">*</span></label><input id="g-id" placeholder="W00000000"><span class="field-note">Your W&M Banner student ID number</span></div>
+            <div class="fgrp"><label>W&amp;M Email <span class="required-star">*</span></label><input id="g-email" type="email" placeholder="username@wm.edu"></div>
+          </div>
+          <div class="form-grid fg2">
+            <div class="fgrp">
+              <label>Major / Concentration <span class="required-star">*</span></label>
+              <select id="g-major">
+                <option value="">Select your major</option>
+                <option>Accounting</option><option>Business Analytics — Data Science</option>
+                <option>Business Analytics — Supply Chain</option><option>Finance</option>
+                <option>Marketing</option><option>Business Administration Minor (only)</option>
+                <option>Pre-Major (not yet admitted)</option><option>Undecided</option>
+              </select>
+            </div>
+            <div class="fgrp">
+              <label>Graduation Term <span class="required-star">*</span></label>
+              <select id="g-grad">
+                <option value="">Select graduation term</option>
+                <option>Spring 2025</option><option>Fall 2025</option><option>Spring 2026</option>
+                <option>Fall 2026</option><option>Spring 2027</option><option>Fall 2027</option>
+                <option>Spring 2028</option><option>Fall 2028</option>
+              </select>
+            </div>
+          </div>
+          <div class="gs-foot"><span></span><button class="btn btn-blue btn-lg" onclick="gNext(1)">Continue &rarr;</button></div>
+        </div>
+
+        <div class="gs" id="gstep-2">
+          <h2 class="gs-title">Topic &amp; preferred time</h2>
+          <p class="gs-sub">Select the main reason for the appointment.</p>
+          <div class="topic-grid">
+            <div class="topic-card" onclick="gSelectTopic(this,'Admissions / Application Requirements')"><h4>Admissions &amp; Application</h4><p>Requirements, timeline, eligibility</p></div>
+            <div class="topic-card" onclick="gSelectTopic(this,'Course Planning & Registration')"><h4>Course Planning &amp; Registration</h4><p>Scheduling, overrides, DegreeWorks</p></div>
+            <div class="topic-card" onclick="gSelectTopic(this,'Transfer Credit Evaluation')"><h4>Transfer Credit Evaluation</h4><p>Course equivalency, faculty review</p></div>
+            <div class="topic-card" onclick="gSelectTopic(this,'Pass/Fail Request')"><h4>Pass / Fail Request</h4><p>Grading option changes, deadlines</p></div>
+            <div class="topic-card" onclick="gSelectTopic(this,'Graduation Planning & Timeline')"><h4>Graduation Planning</h4><p>Credit audit, commencement, diploma</p></div>
+            <div class="topic-card" onclick="gSelectTopic(this,'Study Abroad Planning')"><h4>Study Abroad</h4><p>Reves Center, WU Vienna, approvals</p></div>
+            <div class="topic-card" onclick="gSelectTopic(this,'Major / Concentration Change')"><h4>Major / Concentration Change</h4><p>Switching focus, adding a concentration</p></div>
+            <div class="topic-card" onclick="gSelectTopic(this,'Other')"><h4>Other</h4><p>Anything not listed above</p></div>
+          </div>
+          <div class="form-grid fg3">
+            <div class="fgrp"><label>Preferred Day</label><select id="g-day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Any day</option></select></div>
+            <div class="fgrp"><label>Preferred Time</label><select id="g-time"><option>Morning (9am–12pm)</option><option>Afternoon (1pm–4pm)</option><option>Late afternoon (4–5pm)</option><option>No preference</option></select></div>
+            <div class="fgrp"><label>Meeting Format</label><select id="g-format"><option>In-Person (Miller Hall)</option><option>Zoom / Virtual</option><option>Walk-In Hours</option><option>No preference</option></select></div>
+          </div>
+          <div class="gs-foot"><button class="btn btn-ghost" onclick="gBack(2)">&larr; Back</button><button class="btn btn-blue btn-lg" onclick="gNext(2)">Continue &rarr;</button></div>
+        </div>
+
+        <div class="gs" id="gstep-3">
+          <h2 class="gs-title">Describe your situation</h2>
+          <p class="gs-sub">A few sentences helps your advisor prepare.</p>
+          <div class="form-grid fg1">
+            <div class="fgrp"><label>What's going on? <span class="required-star">*</span></label><textarea id="g-desc" style="min-height:110px" placeholder="Describe your situation in your own words…"></textarea></div>
+          </div>
+          <div class="form-grid fg1">
+            <div class="fgrp"><label>Attachments or links (optional)</label><input id="g-attach" placeholder="e.g. transcript link, DegreeWorks screenshot, syllabus URL"></div>
+          </div>
+          <div class="gs-foot"><button class="btn btn-ghost" onclick="gBack(3)">&larr; Back</button><button class="btn btn-blue btn-lg" onclick="gNext(3)">Review &amp; confirm &rarr;</button></div>
+        </div>
+
+        <div class="gs" id="gstep-4">
+          <h2 class="gs-title">Confirm your request</h2>
+          <p class="gs-sub">Review your details below, then open Calendly to choose a time. Your advisor receives this before the meeting.</p>
+          <div class="sum-block" id="g-sum"></div>
+          <div class="cal-cta">
+            <div><h4>Open Calendly to choose a time</h4><p>Your details are pre-filled — just pick a slot.</p></div>
+            <button class="cal-btn" onclick="gOpenCal()">Schedule Now &rarr;</button>
+          </div>
+          <p style="font-size:12px;color:var(--lt);margin-top:12px;line-height:1.6">Walk-in hours: Mon &amp; Wed 9am–12pm, Tue 1–3pm · Miller Hall Suite 2013.</p>
+          <div class="gs-foot"><button class="btn btn-ghost" onclick="gBack(4)">&larr; Edit</button><button class="btn btn-green" onclick="gReset()">Start new request</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ESCALATION RESPOND MODAL ── -->
+<div class="modal-overlay" id="escModal" onclick="closeEscModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-top">
+      <div><div class="modal-title" id="esc-modal-title">Respond to escalation</div><div class="modal-meta" id="esc-modal-meta"></div></div>
+      <button class="modal-close" onclick="closeEscModal()">&#215;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-qbox"><div class="modal-qlbl">Student question</div><div id="esc-modal-q"></div></div>
+      <label class="modal-lbl">Your response</label>
+      <textarea class="modal-ta" id="esc-modal-ta" placeholder="Write a clear, plain-text answer (2–4 sentences). This will be sent to the student."></textarea>
+      <div class="faq-notice" id="faq-notice"><strong>This answer will be added to the FAQ knowledge base.</strong> It will appear on the student portal within 60 seconds.</div>
+      <div class="modal-acts-row">
+        <label class="modal-chk"><input type="checkbox" id="add-faq" onchange="toggleFaqNotice()"> Add this answer to FAQ (updates portal automatically)</label>
+        <div class="modal-btns">
+          <button class="act-btn" onclick="closeEscModal()">Cancel</button>
+          <button class="act-btn primary" onclick="submitEsc()">Send response</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── SCRIPTS ── -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+// ── TAB ROUTING ──────────────────────────────────────────────────────────────
+const TABS = ['overview','transfer','faq','advising'];
+
+function showTab(id) {
+  TABS.forEach(t => {
+    const sec = document.getElementById(t);
+    const btn = document.getElementById('tab-' + t);
+    if (sec) sec.style.display = (t === id) ? 'block' : 'none';
+    if (btn) btn.classList.toggle('active', t === id);
+  });
+  if (id === 'overview') renderAnnouncements('ann-container');
+  if (id === 'transfer') tcRefresh();
+  if (id === 'faq')      { escRefresh(); kbRefresh(); }
+  if (id === 'advising') { renderAppts(); gSetStep(1); }
+  history.replaceState(null, '', '#' + id);
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    showTab(this.getAttribute('href').split('#')[1]);
+  });
+});
+
+document.querySelectorAll('a[href^="staff.html#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    showTab(this.getAttribute('href').split('#')[1]);
+  });
+});
+
+// ── TRANSFER CREDITS ─────────────────────────────────────────────────────────
+function tcRefresh() {
+  renderTCTable('tc-body','tc-empty','tc-count', TC_DATA,
+    document.getElementById('tc-search').value,
+    document.getElementById('tc-flag').value,
+    document.getElementById('tc-equiv').value);
+}
+
+// ── ESCALATIONS DATA ─────────────────────────────────────────────────────────
+const ESCS = [
+  {id:1,name:'Anonymous',sid:'W0000001',email:'student1@wm.edu',question:'Can I take BUAD 301 before completing BUAD 203 if I have AP credit that substitutes for BUAD 203?',category:'Admissions',received:'3/24',status:'overdue',days:4},
+  {id:2,name:'Anonymous',sid:'W0000002',email:'student2@wm.edu',question:'Does the business school fee apply during a summer session if I am only taking one elective?',category:'Fees',received:'3/24',status:'pending',days:1},
+  {id:3,name:'Anonymous',sid:'W0000003',email:'student3@wm.edu',question:'Can I switch from Finance to Marketing after completing the block semester?',category:'Advising',received:'3/22',status:'resolved',days:0},
+  {id:4,name:'Anonymous',sid:'W0000004',email:'student4@wm.edu',question:'Is there a minimum GPA required to maintain my BBA major status after admission?',category:'Admissions',received:'3/21',status:'overdue',days:6},
+  {id:5,name:'Anonymous',sid:'W0000005',email:'student5@wm.edu',question:'What happens to my business school fee if I go on a leave of absence mid-semester?',category:'Fees',received:'3/20',status:'resolved',days:0},
+  {id:6,name:'Anonymous',sid:'W0000006',email:'student6@wm.edu',question:'My DegreeWorks shows a requirement I already completed as unsatisfied — how do I fix this?',category:'Registration',received:'3/20',status:'pending',days:1},
+  {id:7,name:'Anonymous',sid:'W0000007',email:'student7@wm.edu',question:'I missed the graduation application deadline. Can I still apply for May commencement?',category:'Graduation',received:'3/19',status:'resolved',days:0},
+  {id:8,name:'Anonymous',sid:'W0000008',email:'student8@wm.edu',question:'Can I count a study abroad business course toward my Finance concentration?',category:'Transfer credits',received:'3/18',status:'pending',days:3},
+  {id:9,name:'Anonymous',sid:'W0000009',email:'student9@wm.edu',question:'Do prerequisite courses taken at another institution count toward the 39-credit requirement?',category:'Admissions',received:'3/17',status:'resolved',days:0},
+  {id:10,name:'Anonymous',sid:'W0000010',email:'student10@wm.edu',question:'What is the difference between BUAD 351/352 and the new BUAD 357?',category:'Registration',received:'3/17',status:'pending',days:2},
+  {id:11,name:'Anonymous',sid:'W0000011',email:'student11@wm.edu',question:'Can I apply to the BBA program while on academic probation if I have completed 39 credits?',category:'Admissions',received:'3/16',status:'resolved',days:0},
+];
+
+const S_PILL = {
+  pending:  '<span class="pill pill-amber">Pending</span>',
+  overdue:  '<span class="pill pill-red">Overdue</span>',
+  resolved: '<span class="pill pill-green">Resolved</span>',
+};
+const C_PILL = {
+  'Admissions':      '<span class="pill pill-blue">Admissions</span>',
+  'Fees':            '<span class="pill pill-amber">Fees</span>',
+  'Advising':        '<span class="pill pill-gray">Advising</span>',
+  'Registration':    '<span class="pill pill-gray">Registration</span>',
+  'Graduation':      '<span class="pill pill-gray">Graduation</span>',
+  'Transfer credits':'<span class="pill pill-gray">Transfer credits</span>',
+};
+
+let escActiveId = null;
+
+function escRefresh() {
+  const s  = document.getElementById('esc-search').value.toLowerCase();
+  const st = document.getElementById('esc-status').value;
+  const ct = document.getElementById('esc-cat').value;
+
+  const filt = ESCS.filter(x => {
+    const ms = !s || x.question.toLowerCase().includes(s) || x.category.toLowerCase().includes(s);
+    const mst = st === 'all' || x.status === st;
+    const mc  = ct === 'all' || x.category === ct;
+    return ms && mst && mc;
+  });
+
+  document.getElementById('esc-count').textContent = `Showing ${filt.length} escalation${filt.length !== 1 ? 's' : ''}`;
+  const body  = document.getElementById('esc-body');
+  const empty = document.getElementById('esc-empty');
+
+  if (!filt.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  body.innerHTML = filt.map(x => `
+    <tr>
+      <td style="font-weight:600;color:var(--text)">${esc(x.name)}</td>
+      <td><div class="esc-q">${esc(x.question)}<em>${
+        x.status === 'overdue'  ? `Open ${x.days} days — needs attention` :
+        x.status === 'resolved' ? 'Resolved — answer sent to student' :
+        `Received ${x.received}`}</em></div></td>
+      <td>${C_PILL[x.category] || `<span class="pill pill-gray">${esc(x.category)}</span>`}</td>
+      <td class="mono">${x.received}</td>
+      <td>${S_PILL[x.status]}</td>
+      <td>${x.status !== 'resolved'
+        ? `<button class="act-btn" onclick="openEscModal(${x.id})">Respond</button>`
+        : `<button class="act-btn" onclick="openEscModal(${x.id})">View</button>`}</td>
+    </tr>`).join('');
+}
+
+function openEscModal(id) {
+  const x = ESCS.find(e => e.id === id); escActiveId = id;
+  document.getElementById('esc-modal-title').textContent = x.status === 'resolved' ? 'View resolved escalation' : 'Respond to escalation';
+  document.getElementById('esc-modal-meta').textContent  = `${x.category} · Received ${x.received}`;
+  document.getElementById('esc-modal-q').textContent     = x.question;
+  document.getElementById('esc-modal-ta').value  = '';
+  document.getElementById('add-faq').checked     = false;
+  document.getElementById('faq-notice').style.display = 'none';
+  document.getElementById('escModal').classList.add('open');
+}
+function closeEscModal(ev) {
+  if (ev && ev.target !== document.getElementById('escModal')) return;
+  document.getElementById('escModal').classList.remove('open');
+  escActiveId = null;
+}
+function toggleFaqNotice() {
+  document.getElementById('faq-notice').style.display = document.getElementById('add-faq').checked ? 'block' : 'none';
+}
+function submitEsc() {
+  const resp = document.getElementById('esc-modal-ta').value.trim();
+  if (!resp) { document.getElementById('esc-modal-ta').style.borderColor='var(--red)'; setTimeout(()=>document.getElementById('esc-modal-ta').style.borderColor='',1200); return; }
+  const addFaq = document.getElementById('add-faq').checked;
+  if (escActiveId) { const i = ESCS.findIndex(x => x.id === escActiveId); if (i !== -1) ESCS[i].status = 'resolved'; }
+  document.getElementById('escModal').classList.remove('open');
+  showToast(addFaq ? 'Response sent and FAQ knowledge base updated.' : 'Response sent to student.');
+  updateEscStats(); escRefresh();
+}
+function updateEscStats() {
+  const u = ESCS.filter(x => x.status !== 'resolved').length;
+  const o = ESCS.filter(x => x.status === 'overdue').length;
+  const r = ESCS.filter(x => x.status === 'resolved').length;
+  document.getElementById('statUnresolved').textContent = u;
+  document.getElementById('statResolved').textContent   = r;
+  document.getElementById('statOverdue').textContent    = o > 0 ? `${o} overdue (>3 days)` : 'None overdue';
+  document.getElementById('statOverdue').className      = o > 0 ? 'stat-meta urgent' : 'stat-meta';
+  if (document.getElementById('s-unresolved')) document.getElementById('s-unresolved').textContent = u;
+  if (document.getElementById('s-overdue'))    document.getElementById('s-overdue').textContent    = o > 0 ? `${o} overdue` : 'On track';
+}
+function escExport() {
+  const rows = [['Student','Student ID','Email','Question','Category','Received','Status']];
+  ESCS.forEach(x => rows.push([x.name, x.sid, x.email, x.question, x.category, x.received, x.status]));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='faq_escalations.csv'; a.click();
+  showToast('CSV downloaded.');
+}
+
+// ── KB ────────────────────────────────────────────────────────────────────────
+let kbCat = 'all';
+function kbRefresh() {
+  const s = document.getElementById('kb-search').value;
+  renderFAQ('kb-container','kb-count', FAQ_DATA, s, kbCat);
+  const cnt = document.getElementById('kb-meta');
+  if (cnt) cnt.textContent = (FAQ_DATA.length) + ' answers · 8 categories';
+}
+function kbSetCat(cat, el) {
+  kbCat = cat;
+  document.getElementById('kb-search').value = '';
+  document.querySelectorAll('#kb-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  kbRefresh();
+}
+
+// ── APPOINTMENTS ─────────────────────────────────────────────────────────────
+const APPTS = [
+  {name:'Jordan Smith',  sid:'W0123456',email:'jsmith01@wm.edu',  major:'Finance',              grad:'Sp 2027',topic:'Course Planning & Registration',   day:'Monday',time:'Morning',   fmt:'In-Person',submitted:'3/24',desc:'I want to discuss course planning for next semester and whether I can add a Finance concentration. Currently have 72 credits.'},
+  {name:'Aaliyah Jones', sid:'W0234567',email:'ajones02@wm.edu',  major:'Accounting',           grad:'Sp 2026',topic:'Graduation Planning & Timeline',   day:'Tuesday',time:'Afternoon',fmt:'Zoom',      submitted:'3/23',desc:'I need to do a final credit audit before I apply to graduate. Want to confirm I have all my BUAD requirements satisfied.'},
+  {name:'Marcus Lee',    sid:'W0345678',email:'mlee03@wm.edu',    major:'Pre-Major',             grad:'Sp 2028',topic:'Admissions / Application Requirements',day:'Wednesday',time:'Morning',fmt:'In-Person',submitted:'3/22',desc:'I have 42 credits and just finished BUAD 203. I want to know if I can apply now and what else I need before my application is complete.'},
+  {name:'Sofia Reyes',   sid:'W0456789',email:'sreyes04@wm.edu',  major:'Marketing',             grad:'Fa 2026',topic:'Study Abroad Planning',            day:'Any day',time:'No preference',fmt:'Zoom', submitted:'3/21',desc:'Planning to study abroad at WU Vienna next fall semester. Need to confirm which marketing courses will count toward my major.'},
+];
+
+function renderAppts() {
+  const body = document.getElementById('appt-body');
+  if (!body) return;
+  body.innerHTML = APPTS.map((a,i) => `
+    <tr>
+      <td style="font-weight:600;color:var(--text)">${esc(a.name)}</td>
+      <td class="mono">${esc(a.sid)}</td>
+      <td style="font-size:12px;color:var(--blue)">${esc(a.email)}</td>
+      <td style="font-size:12px">${esc(a.major)}</td>
+      <td class="mono">${esc(a.grad)}</td>
+      <td style="font-size:12px">${esc(a.topic)}</td>
+      <td style="font-size:12px">${esc(a.day)}, ${esc(a.time)}</td>
+      <td><span class="pill ${a.fmt.includes('Zoom') ? 'pill-blue' : 'pill-gray'}">${esc(a.fmt)}</span></td>
+      <td class="mono">${esc(a.submitted)}</td>
+      <td><button class="act-btn" onclick="openApptModal(${i})">View Summary</button></td>
+    </tr>`).join('');
+}
+
+function openApptModal(i) {
+  const a = APPTS[i];
+  document.getElementById('appt-modal-title').textContent = `Appointment Summary — ${a.name}`;
+  document.getElementById('appt-modal-meta').textContent  = `${a.topic} · ${a.day}, ${a.time} · ${a.fmt} · Submitted ${a.submitted}`;
+  document.getElementById('appt-modal-body').innerHTML = `
+    <div class="sum-block">
+      ${[['Student Name',a.name],['Student ID',a.sid],['W&M Email',a.email],['Major',a.major],['Graduation Term',a.grad],['Topic',a.topic],['Preferred Time',`${a.day}, ${a.time}`],['Format',a.fmt],['Description',a.desc]].map(r=>`
+        <div class="sum-row"><span class="sum-lbl">${esc(r[0])}</span><span class="sum-val">${esc(r[1])}</span></div>`).join('')}
+    </div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-ghost btn-sm" onclick="window.open('mailto:${esc(a.email)}?subject=Re: Your BBA Advising Appointment')">Email Student</button>
+    </div>`;
+  document.getElementById('apptModal').classList.add('open');
+}
+function closeApptModal(ev) {
+  if (ev && ev.target !== document.getElementById('apptModal')) return;
+  document.getElementById('apptModal').classList.remove('open');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(function init() {
+  const hash = location.hash.replace('#','') || 'overview';
+  const tab  = TABS.includes(hash) ? hash : 'overview';
+  showTab(tab);
+  updateEscStats();
+})();
+</script>
+</body>
+</html>
