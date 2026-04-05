@@ -206,7 +206,14 @@ h2 {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass })
 
     if (error) {
-      showErr('Incorrect email or password. Please try again.')
+      console.error('Supabase error:', error)
+      if (error.message && error.message.toLowerCase().includes('invalid')) {
+        showErr('Incorrect email or password. Please try again.')
+      } else if (error.message && error.message.toLowerCase().includes('email')) {
+        showErr('Please confirm your email address first — check your inbox for a confirmation link.')
+      } else {
+        showErr('Sign in failed: ' + error.message)
+      }
       return
     }
 

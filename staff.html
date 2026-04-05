@@ -6,31 +6,34 @@
 <title>Mason BBA — Staff Dashboard</title>
 
 
+<script>
+  // Hide page immediately — show only after Supabase confirms valid session
+  document.documentElement.style.visibility = 'hidden';
+</script>
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-  
+
   const supabase = createClient(
     'https://uxukblmzshpqlcdlthzb.supabase.co',
     'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
   )
-  
+
   const allowedEmails = [
-    "lkhorana@wm.edu",
-    "andy.kandell@mason.wm.edu",
-    "tcmathieux@wm.edu",
-    "terry.hinders@mason.wm.edu"
+    'lkhorana@wm.edu',
+    'andy.kandell@mason.wm.edu',
+    'tcmathieux@wm.edu',
+    'terry.hinders@mason.wm.edu'
   ]
-  
-  async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser()
-  
-    if (!user || !allowedEmails.includes(user.email)) {
-      window.location.href = "login.html"
-    }
+
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (!session || !session.user || !allowedEmails.includes(session.user.email.toLowerCase())) {
+    window.location.href = 'login.html'
+  } else {
+    // Valid session — reveal the page
+    document.documentElement.style.visibility = 'visible'
   }
-  
-  checkUser()
-  </script>
+</script>
 
 
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -360,32 +363,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 
 
 /* ── EMAIL MODULE ── */
- tags goes into your main stylesheet
-     or inside a <style> block in the parent page.
-
-  2. COPY THE HTML:
-     The <div id="bba-email-module"> block replaces the current
-     email inbox placeholder tab content in the staff dashboard,
-     and the student form goes into the student-facing portal.
-
-  3. COPY THE JAVASCRIPT:
-     The <script> block at the bottom goes into your main JS file
-     or just before </body> in the parent page.
-
-  4. DATA INTEGRATION:
-     - Replace the `emails` array with a real API fetch once
-       Terry's shared inbox access is set up.
-     - The `submitForm()` function currently previews only —
-       wire it to your backend or mailto: handler as needed.
-     - See "// TODO:" comments throughout for integration hooks.
-
-  5. DEPENDENCIES:
-     None. Pure HTML/CSS/JS — no libraries required.
-  ============================================================
-  -->
-
-  <style>
-    /* ── Reset & base ───────────────────────────────────────── */
+/* ── Reset & base ───────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -1108,7 +1086,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
       });
     })
     .catch(function() {
-      showError('Could not reach the authentication server. Make sure you are on the live Netlify site.');
+      showError('Sign in failed. Check your email and password and try again. Error: ' + (err && err.message ? err.message : 'unknown'));
     });
   };
 
