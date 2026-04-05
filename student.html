@@ -341,7 +341,467 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 
   3. COPY THE JAVASCRIPT:
      The <script> block at the bottom goes into your main JS file
-     or just before </body> in the parent page.
+     or just before 
+
+
+<!-- COURSE PLANNING -->
+<section id="planning" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">BBA Office</p>
+  <h1 class="page-title">Course Planning</h1>
+  <p class="page-sub">Plan your course schedule using the official W&amp;M worksheet format. Fill out the form below, then download as PDF or Excel. Your completed plan is also sent to the BBA Office inbox so your advisor can review it before your meeting.</p>
+
+  <!-- RESOURCE LINKS -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-hd">
+      <div><div class="card-title">2025–2026 Planning Resources</div><div class="card-sub">Direct links to official mason.wm.edu documents — updated each academic year</div></div>
+    </div>
+    <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <a href="https://mason.wm.edu/undergraduate/documents/business-majors-curriculum-guide-2025-2026.pdf" target="_blank" class="qlk">
+        <div style="font-size:20px;margin-bottom:6px">📋</div>
+        <div style="font-weight:600;font-size:13px">Majors &amp; Concentration Curriculum Guide</div>
+        <div class="qlk-sub">2025–2026 · mason.wm.edu ↗</div>
+      </a>
+      <a href="https://mason.wm.edu/undergraduate/documents/business-minors-curriculum-guide-2025-2026.pdf" target="_blank" class="qlk">
+        <div style="font-size:20px;margin-bottom:6px">📄</div>
+        <div style="font-weight:600;font-size:13px">Minor Curriculum Guide</div>
+        <div class="qlk-sub">2025–2026 · mason.wm.edu ↗</div>
+      </a>
+      <a href="https://mason.wm.edu/undergraduate/documents/course-planning-worksheet.pdf" target="_blank" class="qlk">
+        <div style="font-size:20px;margin-bottom:6px">📝</div>
+        <div style="font-weight:600;font-size:13px">Official Course Planning Worksheet</div>
+        <div class="qlk-sub">Blank PDF form · mason.wm.edu ↗</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE WORKSHEET -->
+  <div class="card">
+    <div class="card-hd">
+      <div>
+        <div class="card-title">Interactive Course Planning Worksheet</div>
+        <div class="card-sub">Mirrors the official W&amp;M format — fill out and download or send to your advisor</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="act-btn primary" onclick="downloadPlanPDF()">⬇ Download PDF</button>
+        <button class="act-btn" onclick="downloadPlanExcel()">⬇ Download Excel</button>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- STUDENT INFO — mirrors top of official worksheet -->
+      <div style="margin-bottom:20px">
+        <div class="page-eyebrow" style="margin-bottom:10px">Student information</div>
+        <div class="form-grid fg2">
+          <div class="fgrp">
+            <label>Name <span class="required-star">*</span></label>
+            <input id="pl-name" placeholder="e.g. Jordan Smith">
+          </div>
+          <div class="fgrp">
+            <label>WM ID# <span class="required-star">*</span></label>
+            <input id="pl-sid" placeholder="W00000000">
+          </div>
+        </div>
+        <div class="form-grid fg3">
+          <div class="fgrp">
+            <label>Major(s) <span class="required-star">*</span></label>
+            <select id="pl-major">
+              <option value="">Select major</option>
+              <option>Accounting</option>
+              <option>Business Analytics — Data Science</option>
+              <option>Business Analytics — Supply Chain</option>
+              <option>Finance</option>
+              <option>Marketing</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Concentration</label>
+            <select id="pl-conc">
+              <option value="">None / undecided</option>
+              <option>Accounting</option>
+              <option>Finance</option>
+              <option>Marketing</option>
+              <option>Business Analytics</option>
+              <option>Consulting</option>
+              <option>Management &amp; Org Leadership</option>
+              <option>Supply Chain Analytics</option>
+              <option>Sustainability</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Minor</label>
+            <input id="pl-minor" placeholder="e.g. Economics">
+          </div>
+        </div>
+        <div class="form-grid fg2">
+          <div class="fgrp">
+            <label>Credits at end of this semester <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--lt)">("Credits Applied" from DegreeWorks)</span></label>
+            <input id="pl-credits-now" type="number" placeholder="e.g. 45" min="0" max="120">
+          </div>
+          <div class="fgrp">
+            <label>W&amp;M Email</label>
+            <input id="pl-email" type="email" placeholder="username@wm.edu">
+          </div>
+        </div>
+        <div style="background:var(--cream-dk);border-radius:var(--r);padding:11px 14px;font-size:12px;color:var(--mid);line-height:1.6">
+          Add all future planned semesters together with your "credits applied" from DegreeWorks. You need <strong>120 credits</strong> to graduate (transfer students need at least 60 credits at W&amp;M).
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- SEMESTER BLOCKS — Fall / Spring / Summer like the official PDF -->
+      <div style="margin-bottom:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="page-eyebrow">Course plan by semester</div>
+          <div id="pl-total-display" style="font-size:13px;color:var(--green);font-weight:600"></div>
+        </div>
+        <div id="plan-semesters"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addSemester()" style="margin-top:10px">+ Add semester</button>
+      </div>
+
+      <hr>
+
+      <!-- NOTES -->
+      <div>
+        <div class="page-eyebrow" style="margin-bottom:8px">Notes for advisor</div>
+        <div class="fgrp">
+          <textarea id="pl-notes" style="min-height:80px" placeholder="Any questions, concerns, or additional context your advisor should know before the meeting…"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:18px">
+        <button class="btn btn-green btn-lg" onclick="downloadPlanPDF()">⬇ Download PDF</button>
+        <button class="btn btn-ghost btn-lg" onclick="downloadPlanExcel()">⬇ Download Excel &amp; send to inbox</button>
+      </div>
+      <p style="font-size:11.5px;color:var(--lt);margin-top:8px">Downloading Excel also opens your email client pre-addressed to bba@mason.wm.edu with your full plan — so it lands in the staff inbox automatically.</p>
+
+    </div>
+  </div>
+</section>
+
+<script>
+<script>
+/* ── COURSE PLANNING WORKSHEET ── */
+/* Mirrors the official W&M Course Planning Worksheet PDF structure */
+
+var planSemesters = [
+  { term: 'Fall 2025',   type: 'Fall',   courses: [{name:'',credits:''}] },
+  { term: 'Spring 2026', type: 'Spring', courses: [{name:'',credits:''}] },
+];
+
+function plCalcTotal() {
+  var base = parseInt(document.getElementById('pl-credits-now').value) || 0;
+  var future = planSemesters.reduce(function(sum, sem) {
+    return sum + sem.courses.reduce(function(s2, c) {
+      return s2 + (parseInt(c.credits) || 0);
+    }, 0);
+  }, 0);
+  var total = base + future;
+  var el = document.getElementById('pl-total-display');
+  if (el) {
+    el.textContent = 'Projected total: ' + total + ' / 120 credits';
+    el.style.color = total >= 120 ? 'var(--teal)' : 'var(--green)';
+  }
+}
+
+function renderSemesters() {
+  var container = document.getElementById('plan-semesters');
+  if (!container) return;
+
+  container.innerHTML = planSemesters.map(function(sem, si) {
+    var semTotal = sem.courses.reduce(function(s, c){ return s + (parseInt(c.credits)||0); }, 0);
+    return '<div style="margin-bottom:14px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden">'
+      // Semester header
+      + '<div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">'
+        + '<div style="display:flex;align-items:center;gap:10px">'
+          + '<span style="font-size:12px;font-weight:600;color:var(--text)">' + sem.term + '</span>'
+          + (planSemesters.length > 1
+              ? '<button onclick="removeSemester('+si+')" style="font-size:10px;color:var(--lt);background:none;border:none;cursor:pointer;padding:0">Remove</button>'
+              : '')
+        + '</div>'
+        + '<span style="font-size:11.5px;font-weight:600;color:var(--green)">TOTAL: ' + semTotal + ' credits</span>'
+      + '</div>'
+      // Course rows — matches official worksheet columns: Course | Credits
+      + '<table style="width:100%;border-collapse:collapse">'
+        + '<thead><tr>'
+          + '<th style="font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--lt);padding:7px 14px;text-align:left;border-bottom:1px solid var(--border);background:var(--cream);width:85%">Course</th>'
+          + '<th style="font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--lt);padding:7px 14px;text-align:center;border-bottom:1px solid var(--border);background:var(--cream);width:15%">Credits</th>'
+        + '</tr></thead>'
+        + '<tbody>'
+        + sem.courses.map(function(c, ci) {
+            return '<tr>'
+              + '<td style="padding:6px 10px;border-bottom:1px solid var(--border-lt)">'
+                + '<input style="width:100%;border:none;background:transparent;font-size:13px;font-family:Inter,sans-serif;color:var(--text);outline:none;padding:2px 4px" '
+                  + 'placeholder="e.g. BUAD 311 — Principles of Marketing" '
+                  + 'value="' + c.name.replace(/"/g,'&quot;') + '" '
+                  + 'oninput="planSemesters['+si+'].courses['+ci+'].name=this.value">'
+              + '</td>'
+              + '<td style="padding:6px 10px;border-bottom:1px solid var(--border-lt);text-align:center">'
+                + '<input style="width:52px;border:none;background:transparent;font-size:13px;font-family:Inter,sans-serif;color:var(--text);outline:none;padding:2px 4px;text-align:center" '
+                  + 'type="number" min="1" max="6" placeholder="3" '
+                  + 'value="' + (c.credits||'') + '" '
+                  + 'oninput="planSemesters['+si+'].courses['+ci+'].credits=this.value;renderSemesters();plCalcTotal()">'
+              + '</td>'
+            + '</tr>';
+          }).join('')
+        + '</tbody>'
+      + '</table>'
+      // Add course row button
+      + '<div style="padding:8px 14px;background:var(--cream)">'
+        + '<button onclick="addCourse('+si+')" style="font-size:11.5px;color:var(--green);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif;padding:0;font-weight:600">+ Add course row</button>'
+        + (sem.courses.length > 1
+            ? ' &nbsp;<button onclick="removeLastCourse('+si+')" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif;padding:0">Remove last</button>'
+            : '')
+      + '</div>'
+    + '</div>';
+  }).join('');
+
+  plCalcTotal();
+}
+
+function addSemester() {
+  var allTerms = [
+    'Summer 2025','Fall 2025','Spring 2026','Summer 2026',
+    'Fall 2026','Spring 2027','Summer 2027',
+    'Fall 2027','Spring 2028','Summer 2028','Fall 2028'
+  ];
+  var used = planSemesters.map(function(s){ return s.term; });
+  var next = allTerms.find(function(t){ return !used.includes(t); }) || 'Semester ' + (planSemesters.length+1);
+  var type = next.includes('Fall') ? 'Fall' : next.includes('Spring') ? 'Spring' : 'Summer';
+  planSemesters.push({ term: next, type: type, courses: [{name:'',credits:''}] });
+  renderSemesters();
+}
+
+function removeSemester(i) {
+  planSemesters.splice(i, 1);
+  renderSemesters();
+}
+
+function addCourse(si) {
+  planSemesters[si].courses.push({ name:'', credits:'' });
+  renderSemesters();
+}
+
+function removeLastCourse(si) {
+  if (planSemesters[si].courses.length > 1) {
+    planSemesters[si].courses.pop();
+    renderSemesters();
+  }
+}
+
+function getPlanData() {
+  return {
+    name:       (document.getElementById('pl-name').value    || '').trim(),
+    sid:        (document.getElementById('pl-sid').value     || '').trim(),
+    email:      (document.getElementById('pl-email').value   || '').trim(),
+    major:      document.getElementById('pl-major').value,
+    conc:       document.getElementById('pl-conc').value,
+    minor:      (document.getElementById('pl-minor').value   || '').trim(),
+    creditsNow: document.getElementById('pl-credits-now').value || '0',
+    notes:      (document.getElementById('pl-notes').value   || '').trim(),
+    semesters:  planSemesters,
+    date:       new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
+  };
+}
+
+/* ── PDF — printable page matching official worksheet layout ── */
+function downloadPlanPDF() {
+  var d = getPlanData();
+  if (!d.name || !d.sid) { alert('Please enter your Name and WM ID# first.'); return; }
+
+  var semHTML = d.semesters.map(function(sem) {
+    var rows = sem.courses.map(function(c) {
+      return '<tr>'
+        + '<td style="padding:5px 8px;border:1px solid #ddd;font-size:12px">' + (c.name||'') + '</td>'
+        + '<td style="padding:5px 8px;border:1px solid #ddd;font-size:12px;text-align:center">' + (c.credits||'') + '</td>'
+      + '</tr>';
+    }).join('');
+    var total = sem.courses.reduce(function(s,c){ return s+(parseInt(c.credits)||0); }, 0);
+    return '<div style="margin-bottom:18px;page-break-inside:avoid">'
+      + '<div style="font-weight:700;font-size:13px;background:#f0efeb;padding:6px 10px;border:1px solid #ddd;border-bottom:none">'
+        + sem.term + ' Credits'
+      + '</div>'
+      + '<table style="width:100%;border-collapse:collapse">'
+        + '<thead><tr>'
+          + '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:left;background:#f8f7f5;width:85%">Course</th>'
+          + '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:center;background:#f8f7f5;width:15%">Credits</th>'
+        + '</tr></thead>'
+        + '<tbody>' + rows + '</tbody>'
+        + '<tfoot><tr>'
+          + '<td style="padding:5px 8px;border:1px solid #ddd;font-size:12px;font-weight:700;text-align:right">TOTAL</td>'
+          + '<td style="padding:5px 8px;border:1px solid #ddd;font-size:12px;font-weight:700;text-align:center">' + total + '</td>'
+        + '</tr></tfoot>'
+      + '</table>'
+    + '</div>';
+  }).join('');
+
+  var creditsNow = parseInt(d.creditsNow) || 0;
+  var creditsPlanned = d.semesters.reduce(function(sum,sem){
+    return sum + sem.courses.reduce(function(s,c){ return s+(parseInt(c.credits)||0); }, 0);
+  }, 0);
+  var creditsTotal = creditsNow + creditsPlanned;
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<title>Course Planning Worksheet — ' + d.name + '</title>'
+    + '<style>'
+      + 'body{font-family:Georgia,serif;max-width:740px;margin:0 auto;padding:32px 28px;color:#1a1a18}'
+      + 'h1{font-size:22px;font-weight:700;margin-bottom:2px}'
+      + 'h2{font-size:13px;font-weight:400;color:#6b6b67;margin-bottom:22px}'
+      + '.info-table{width:100%;border-collapse:collapse;margin-bottom:14px}'
+      + '.info-table td{padding:6px 10px;border:1px solid #ddd;font-size:12px}'
+      + '.info-table th{padding:6px 10px;border:1px solid #ddd;font-size:11px;font-weight:700;background:#f0efeb;text-align:left}'
+      + '.note{font-size:11px;color:#6b6b67;line-height:1.6;border:1px solid #ddd;padding:8px 12px;margin-bottom:18px;background:#f8f7f5}'
+      + '.total-bar{background:#115740;color:white;padding:8px 12px;font-size:13px;font-weight:700;margin-bottom:18px;border-radius:4px}'
+      + '@media print{body{padding:16px}}'
+    + '</style></head><body>'
+    + '<h1>Course Planning Worksheet</h1>'
+    + '<h2>Mason School of Business · William &amp; Mary · ' + d.date + '</h2>'
+    + '<table class="info-table"><tr>'
+      + '<th>Name</th><th>WM ID#</th>'
+    + '</tr><tr>'
+      + '<td>' + d.name + '</td><td>' + d.sid + '</td>'
+    + '</tr></table>'
+    + '<table class="info-table"><tr>'
+      + '<th>Major(s)</th><th>Concentration</th><th>Minor</th>'
+    + '</tr><tr>'
+      + '<td>' + (d.major||'—') + '</td><td>' + (d.conc||'—') + '</td><td>' + (d.minor||'—') + '</td>'
+    + '</tr></table>'
+    + '<table class="info-table"><tr>'
+      + '<th>Credits at end of this semester<br><span style="font-weight:400;font-size:10px">("Credits Applied" from DegreeWorks)</span></th>'
+      + '<th>Credits planned</th><th>Total credits</th>'
+    + '</tr><tr>'
+      + '<td style="font-weight:700;font-size:14px">' + creditsNow + '</td>'
+      + '<td style="font-size:14px">' + creditsPlanned + '</td>'
+      + '<td style="font-weight:700;font-size:14px;color:' + (creditsTotal>=120?'#115740':'#1a1a18') + '">' + creditsTotal + '</td>'
+    + '</tr></table>'
+    + '<p class="note">Add all of your future planned semesters together with your "credits applied" from DegreeWorks. You need <strong>120 credits</strong> to graduate (transfer students need at least 60 credits at William &amp; Mary).</p>'
+    + '<div style="font-weight:700;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#888;margin-bottom:10px">Course Plan by Semester</div>'
+    + semHTML
+    + (d.notes ? '<div style="margin-top:12px"><div style="font-weight:700;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#888;margin-bottom:6px">Notes for Advisor</div><p style="font-size:12px;line-height:1.7;border:1px solid #ddd;padding:10px;border-radius:4px">' + d.notes + '</p></div>' : '')
+    + '<p style="font-size:10px;color:#aaa;margin-top:28px;border-top:1px solid #eee;padding-top:10px">Generated via BBA Student Portal · mason-bba.vercel.app</p>'
+    + '</body></html>';
+
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); }, 600);
+}
+
+/* ── Excel/CSV — structured spreadsheet matching PDF layout ── */
+function downloadPlanExcel() {
+  var d = getPlanData();
+  if (!d.name || !d.sid) { alert('Please enter your Name and WM ID# first.'); return; }
+
+  var creditsNow     = parseInt(d.creditsNow) || 0;
+  var creditsPlanned = d.semesters.reduce(function(sum,sem){
+    return sum + sem.courses.reduce(function(s,c){ return s+(parseInt(c.credits)||0); }, 0);
+  }, 0);
+  var creditsTotal = creditsNow + creditsPlanned;
+
+  // Matches official worksheet layout exactly
+  var rows = [
+    ['COURSE PLANNING WORKSHEET'],
+    ['Mason School of Business · William & Mary'],
+    ['Generated: ' + d.date],
+    [],
+    ['Name',         d.name,  'WM ID#',    d.sid],
+    ['Major(s)',     d.major||'', 'Concentration', d.conc||'', 'Minor', d.minor||''],
+    [],
+    ['Credits at end of this semester ("Credits Applied" from DegreeWorks)', creditsNow],
+    ['Credits planned (all future semesters)', creditsPlanned],
+    ['TOTAL CREDITS', creditsTotal, '', (creditsTotal >= 120 ? 'Goal reached (120 required)' : (120-creditsTotal) + ' more credits needed')],
+    [],
+    ['Note: Add all future planned semesters with your DegreeWorks "credits applied". Need 120 to graduate (transfer students need at least 60 at W&M).'],
+    [],
+    ['COURSE PLAN BY SEMESTER'],
+  ];
+
+  d.semesters.forEach(function(sem) {
+    var semTotal = sem.courses.reduce(function(s,c){ return s+(parseInt(c.credits)||0); }, 0);
+    rows.push([sem.term + ' Credits', '', 'Credits']);
+    sem.courses.forEach(function(c, i) {
+      rows.push(['  ' + (c.name||''), '', c.credits||'']);
+    });
+    rows.push(['  TOTAL', '', semTotal]);
+    rows.push([]);
+  });
+
+  if (d.notes) {
+    rows.push(['NOTES FOR ADVISOR']);
+    rows.push([d.notes]);
+    rows.push([]);
+  }
+
+  rows.push(['SUBMITTED BY']);
+  rows.push([d.name, d.sid, d.email]);
+  rows.push(['Submitted via BBA Student Portal · mason-bba.vercel.app']);
+
+  // Build CSV
+  var csv = rows.map(function(r){
+    return (Array.isArray(r) ? r : [r]).map(function(v){
+      return '"' + String(v==null?'':v).replace(/"/g,'""') + '"';
+    }).join(',');
+  }).join('
+');
+
+  // Download CSV (Excel opens natively)
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'course-plan-' + d.name.replace(/\s+/g,'-').toLowerCase() + '-' + d.sid + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  // Also send to staff inbox via mailto
+  var emailBody = [
+    'COURSE PLANNING WORKSHEET',
+    'Student: ' + d.name + ' | WM ID#: ' + d.sid + (d.email ? ' | Email: ' + d.email : ''),
+    'Major: ' + (d.major||'—') + ' | Concentration: ' + (d.conc||'—') + ' | Minor: ' + (d.minor||'—'),
+    'Credits applied (current): ' + creditsNow + ' | Planned: ' + creditsPlanned + ' | Total: ' + creditsTotal + '/120',
+    '',
+    '--- COURSE PLAN ---',
+  ].concat(
+    d.semesters.map(function(sem){
+      var cs = sem.courses.filter(function(c){return c.name && c.name.trim();});
+      var total = sem.courses.reduce(function(s,c){return s+(parseInt(c.credits)||0);},0);
+      return sem.term + ':
+' + (cs.length
+        ? cs.map(function(c){ return '  - ' + c.name + (c.credits ? ' (' + c.credits + ' cr)' : ''); }).join('
+')
+        : '  (none entered)')
+        + '
+  TOTAL: ' + total + ' credits';
+    })
+  ).concat([
+    d.notes ? '
+--- NOTES FOR ADVISOR ---
+' + d.notes : '',
+    '',
+    '— Sent via BBA Student Portal'
+  ]).join('
+');
+
+  setTimeout(function() {
+    window.location.href = 'mailto:bba@mason.wm.edu'
+      + '?subject=' + encodeURIComponent('[Course Planning] ' + d.name + ' (' + d.sid + ')')
+      + '&body='    + encodeURIComponent(emailBody);
+  }, 800);
+
+  showToast('Excel downloaded! Opening email to send to BBA Office…');
+}
+
+// Init when tab opens
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderSemesters);
+} else {
+  renderSemesters();
+}
+</script>
+</body> in the parent page.
 
   4. DATA INTEGRATION:
      - Replace the `emails` array with a real API fetch once
@@ -805,7 +1265,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
     <button class="tab-btn"        id="tab-transfer" onclick="showTab('transfer')">Transfer Credits</button>
     <button class="tab-btn"        id="tab-faq"      onclick="showTab('faq')">FAQ</button>
     <button class="tab-btn"        id="tab-guidance" onclick="showTab('guidance')">Guidance &amp; Advising</button>
-    <button class="tab-btn" id="tab-contact" onclick="showTab('contact')">Contact BBA Office</button>
+    <button class="tab-btn" id="tab-contact"  onclick="showTab('contact')">Contact BBA Office</button>
+    <button class="tab-btn" id="tab-planning" onclick="showTab('planning')">Course Planning</button>
   </nav>
 </header>
 
@@ -5531,7 +5992,7 @@ function gReset() {
 </script>
 <script>
 // ── TAB ROUTING ──────────────────────────────────────────────────────────────
-const TABS = ['home','transfer','faq','guidance','contact'];
+const TABS = ['home','transfer','faq','guidance','contact','planning'];
 
 function showTab(id) {
   TABS.forEach(t => {
