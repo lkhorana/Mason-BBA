@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Login — Mason BBA</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F5F0E8;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #DDD8CE;
+  border-radius: 14px;
+  padding: 44px 48px;
+  width: 400px;
+  max-width: 100%;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  text-align: center;
+}
+
+.seal {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #115740;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+  font-family: 'Lora', serif; font-size: 20px; font-weight: 700; color: #B9975B;
+}
+
+h2 {
+  font-family: 'Lora', serif; font-size: 20px; color: #1C1C1C;
+  margin-bottom: 4px; font-weight: 700;
+}
+.sub {
+  font-size: 12.5px; color: #8A8A8A; margin-bottom: 28px; line-height: 1.6;
+}
+
+.field { text-align: left; margin-bottom: 16px; }
+.field label {
+  display: block; font-size: 10px; font-weight: 700;
+  letter-spacing: .7px; text-transform: uppercase;
+  color: #8A8A8A; margin-bottom: 5px;
+}
+.field input {
+  width: 100%; padding: 11px 13px;
+  border: 1px solid #DDD8CE; border-radius: 8px;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: #1C1C1C;
+  outline: none; transition: border-color .15s; background: white;
+  -webkit-appearance: none;
+}
+.field input:focus {
+  border-color: #115740;
+  box-shadow: 0 0 0 3px rgba(17,87,64,.07);
+}
+
+.btn {
+  width: 100%; padding: 12px;
+  background: #115740; color: white; border: none;
+  border-radius: 8px; font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .15s; margin-top: 4px;
+}
+.btn:hover { background: #0d4230; }
+.btn:disabled { background: #aaa; cursor: not-allowed; }
+
+.error {
+  background: #FDECEA; border: 1px solid #E8B4B0;
+  border-radius: 7px; padding: 10px 13px;
+  font-size: 12.5px; color: #C0392B;
+  margin-bottom: 16px; display: none;
+  text-align: left; line-height: 1.5;
+}
+.info {
+  background: #E6F2EF; border: 1px solid #9FCEC7;
+  border-radius: 7px; padding: 10px 13px;
+  font-size: 12.5px; color: #0F6B5A;
+  margin-bottom: 16px; display: none;
+  text-align: left; line-height: 1.5;
+}
+.spinner { font-size: 12px; color: #8A8A8A; margin-top: 10px; display: none; }
+
+.divider {
+  margin: 20px 0; border: none;
+  border-top: 1px solid #EAE6DE;
+}
+.forgot {
+  font-size: 12px; color: #1A5EA8; cursor: pointer;
+  background: none; border: none; font-family: 'Inter', sans-serif;
+}
+.forgot:hover { text-decoration: underline; }
+
+.student-link {
+  margin-top: 20px; font-size: 12px; color: #8A8A8A;
+}
+.student-link a { color: #1A5EA8; text-decoration: none; }
+.student-link a:hover { text-decoration: underline; }
+
+/* Forgot password mode */
+#forgot-section { display: none; }
+#login-section  { display: block; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="seal">W</div>
+  <h2>Staff Dashboard</h2>
+  <p class="sub">Mason School of Business — BBA Office<br>Authorised staff only</p>
+
+  <div class="error" id="err"></div>
+  <div class="info"  id="inf"></div>
+
+  <!-- LOGIN FORM -->
+  <div id="login-section">
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="yourname@mason.wm.edu"
+        onkeydown="if(event.key==='Enter') document.getElementById('pass').focus()">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="pass" placeholder="Your password"
+        onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <button class="btn" id="login-btn" onclick="doLogin()">Sign in</button>
+    <div class="spinner" id="spinner">Signing in…</div>
+    <hr class="divider">
+    <button class="forgot" onclick="showForgot()">Forgot your password?</button>
+  </div>
+
+  <!-- FORGOT PASSWORD FORM -->
+  <div id="forgot-section">
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="reset-email" placeholder="yourname@mason.wm.edu"
+        onkeydown="if(event.key==='Enter') doReset()">
+    </div>
+    <button class="btn" id="reset-btn" onclick="doReset()">Send reset link</button>
+    <div class="spinner" id="reset-spinner">Sending…</div>
+    <hr class="divider">
+    <button class="forgot" onclick="showLogin()">Back to sign in</button>
+  </div>
+
+  <p class="student-link">
+    Looking for the student portal? <a href="index.html">Go here</a>
+  </p>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const supabase = createClient(
+    'https://uxukblmzshpqlcdlthzb.supabase.co',
+    'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
+  )
+
+  const ALLOWED = [
+    'lkhorana@wm.edu',
+    'andy.kandell@mason.wm.edu',
+    'tcmathieux@wm.edu',
+    'terry.hinders@mason.wm.edu'
+  ]
+
+  function showErr(msg) {
+    document.getElementById('err').textContent = msg;
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('inf').style.display = 'none';
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('login-btn').disabled = false;
+  }
+
+  function showInf(msg) {
+    document.getElementById('inf').textContent = msg;
+    document.getElementById('inf').style.display = 'block';
+    document.getElementById('err').style.display = 'none';
+  }
+
+  // If already logged in with an allowed email, go straight to staff
+  async function checkExisting() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user && ALLOWED.includes(session.user.email)) {
+      window.location.href = 'staff.html'
+    }
+  }
+  checkExisting()
+
+  window.doLogin = async function() {
+    const email = document.getElementById('email').value.trim().toLowerCase()
+    const pass  = document.getElementById('pass').value
+
+    if (!email) { showErr('Please enter your email address.'); return; }
+    if (!pass)  { showErr('Please enter your password.'); return; }
+
+    document.getElementById('login-btn').disabled = true
+    document.getElementById('spinner').style.display = 'block'
+    document.getElementById('err').style.display = 'none'
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass })
+
+    if (error) {
+      showErr('Incorrect email or password. Please try again.')
+      return
+    }
+
+    if (!ALLOWED.includes(data.user.email)) {
+      await supabase.auth.signOut()
+      showErr(data.user.email + ' is not authorised to access this dashboard.')
+      return
+    }
+
+    // Success — go to staff dashboard
+    window.location.href = 'staff.html'
+  }
+
+  window.doReset = async function() {
+    const email = document.getElementById('reset-email').value.trim().toLowerCase()
+    if (!email) { showErr('Please enter your email address.'); return; }
+
+    document.getElementById('reset-btn').disabled = true
+    document.getElementById('reset-spinner').style.display = 'block'
+    document.getElementById('err').style.display = 'none'
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/login.html'
+    })
+
+    document.getElementById('reset-btn').disabled = false
+    document.getElementById('reset-spinner').style.display = 'none'
+
+    if (error) {
+      showErr('Could not send reset email. Check the address and try again.')
+    } else {
+      showInf('Reset link sent! Check your inbox and click the link to set a new password.')
+      showLogin()
+    }
+  }
+
+  window.showForgot = function() {
+    document.getElementById('login-section').style.display  = 'none'
+    document.getElementById('forgot-section').style.display = 'block'
+    document.getElementById('err').style.display = 'none'
+    document.getElementById('inf').style.display = 'none'
+  }
+
+  window.showLogin = function() {
+    document.getElementById('login-section').style.display  = 'block'
+    document.getElementById('forgot-section').style.display = 'none'
+  }
+
+  // Handle password reset redirect (Supabase sends #access_token in URL)
+  const hash = new URLSearchParams(window.location.hash.substring(1))
+  if (hash.get('type') === 'recovery') {
+    showInf('Your password has been reset. Please log in with your new password.')
+  }
+</script>
+
+</body>
+</html>

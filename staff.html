@@ -25,7 +25,7 @@
     const { data: { user } } = await supabase.auth.getUser()
   
     if (!user || !allowedEmails.includes(user.email)) {
-      window.location.href = "index.html"
+      window.location.href = "login.html"
     }
   }
   
