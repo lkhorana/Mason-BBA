@@ -5800,12 +5800,12 @@ function closeApptModal(ev) {
 <div id="bba-email-module">
 
     <div class="em-tab-bar">
-      <button class="em-tab active" onclick="emSwitchTab('student')">Student submission</button>
-      <button class="em-tab"        onclick="emSwitchTab('staff')">Staff inbox</button>
+      <button class="em-tab"        onclick="emSwitchTab('student')">Student submission</button>
+      <button class="em-tab active" onclick="emSwitchTab('staff')">Staff inbox</button>
     </div>
 
     <!-- ── STUDENT PANEL ───────────────────────────────────── -->
-    <div class="em-panel active" id="em-tab-student">
+    <div class="em-panel" id="em-tab-student">
 
       <div class="em-section">
         <div class="em-section-label">Contact information</div>
@@ -5869,7 +5869,7 @@ function closeApptModal(ev) {
 
 
     <!-- ── STAFF PANEL ─────────────────────────────────────── -->
-    <div class="em-panel" id="em-tab-staff">
+    <div class="em-panel active" id="em-tab-staff">
 
       <!-- Summary stats -->
       <div class="em-stats-row">
