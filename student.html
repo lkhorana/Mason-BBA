@@ -329,6 +329,525 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
   .portal-header { padding: 0 16px; }
 }
 
+
+/* ── EMAIL MODULE ── */
+ tags goes into your main stylesheet
+     or inside a <style> block in the parent page.
+
+  2. COPY THE HTML:
+     The <div id="bba-email-module"> block replaces the current
+     email inbox placeholder tab content in the staff dashboard,
+     and the student form goes into the student-facing portal.
+
+  3. COPY THE JAVASCRIPT:
+     The <script> block at the bottom goes into your main JS file
+     or just before <script>
+/* ── EMAIL MODULE (student side only) ── */
+var emSelectedCat = '';
+
+function emSelectCat(btn, cat) {
+  document.querySelectorAll('.em-cat-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  emSelectedCat = cat;
+}
+
+function emSubmit() {
+  var name    = document.getElementById('em-name').value.trim()    || 'Student';
+  var sid     = document.getElementById('em-sid') ? document.getElementById('em-sid').value.trim() : '';
+  var major   = document.getElementById('em-major') ? document.getElementById('em-major').value.trim() : '';
+  var email   = document.getElementById('em-email').value.trim()   || 'student@wm.edu';
+  var subject = document.getElementById('em-subject').value.trim() || 'BBA inquiry';
+  var body    = document.getElementById('em-body').value.trim()    || '(No message provided.)';
+  var cat     = emSelectedCat || 'General question';
+
+  if (!document.getElementById('em-name').value.trim()) { alert('Please enter your name.'); return; }
+  if (!document.getElementById('em-sid').value.trim())  { alert('Please enter your Student ID.'); return; }
+  if (!document.getElementById('em-email').value.trim()){ alert('Please enter your W&M email.'); return; }
+  if (!emSelectedCat) { alert('Please select a request category.'); return; }
+
+  var fullSubject = '[' + cat + '] ' + subject;
+  var fullBody    = 'Category: ' + cat + '\n'
+    + 'Student: ' + name + ' (' + (sid ? 'ID: ' + sid + ' · ' : '') + email + (major ? ' · ' + major : '') + ')\n\n'
+    + body + '\n\n— Sent via BBA Student Portal';
+
+  document.getElementById('em-prev-from').textContent    = name + (sid ? ' · ' + sid : '') + ' <' + email + '>';
+  document.getElementById('em-prev-subject').textContent = fullSubject;
+  document.getElementById('em-prev-body').textContent    = fullBody;
+  document.getElementById('em-preview').style.display    = 'block';
+
+  // Store for send/copy
+  window._emLastSubject = fullSubject;
+  window._emLastBody    = fullBody;
+  window._emLastEmail   = email;
+}
+
+function emSendEmail() {
+  if (!window._emLastSubject) { alert('Please fill out and preview the form first.'); return; }
+  window.location.href = 'mailto:bba@mason.wm.edu'
+    + '?subject=' + encodeURIComponent(window._emLastSubject)
+    + '&body='    + encodeURIComponent(window._emLastBody);
+}
+
+function emCopyEmail() {
+  if (!window._emLastBody) { alert('Please fill out and preview the form first.'); return; }
+  var text = 'To: bba@mason.wm.edu\nSubject: ' + window._emLastSubject + '\n\n' + window._emLastBody;
+  navigator.clipboard ? navigator.clipboard.writeText(text).then(function(){ alert('Copied to clipboard!'); })
+                      : (function(){ var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Copied!'); })();
+}
+
+function emResetForm() {
+  ['em-name','em-email','em-sid','em-major','em-subject','em-body'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value='';
+  });
+  document.querySelectorAll('.em-cat-btn').forEach(function(b){ b.classList.remove('selected'); });
+  document.getElementById('em-preview').style.display = 'none';
+  emSelectedCat = '';
+  window._emLastSubject = window._emLastBody = window._emLastEmail = '';
+}
+</script>
+</body> in the parent page.
+
+  4. DATA INTEGRATION:
+     - Replace the `emails` array with a real API fetch once
+       Terry's shared inbox access is set up.
+     - The `submitForm()` function currently previews only —
+       wire it to your backend or mailto: handler as needed.
+     - See "// TODO:" comments throughout for integration hooks.
+
+  5. DEPENDENCIES:
+     None. Pure HTML/CSS/JS — no libraries required.
+  ============================================================
+  -->
+
+  <style>
+    /* ── Reset & base ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg-page:         #f5f4f0;
+      --color-bg-surface:      #ffffff;
+      --color-bg-muted:        #f0efeb;
+      --color-border:          rgba(0,0,0,0.10);
+      --color-border-strong:   rgba(0,0,0,0.18);
+      --color-text-primary:    #1a1a18;
+      --color-text-secondary:  #6b6b67;
+      --color-text-hint:       #9a9a96;
+      --color-accent:          #185FA5;
+      --color-accent-bg:       #E6F1FB;
+      --color-accent-text:     #0C447C;
+      --radius-md:             8px;
+      --radius-lg:             12px;
+      --radius-xl:             16px;
+      --font-sans:             'Georgia', 'Times New Roman', serif; /* swap for your dashboard font */
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif; /* matches most dashboards */
+      background: var(--color-bg-page);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    /* ── Page shell (remove when embedding) ─────────────────── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    .page-header .wm-mark {
+      width: 36px;
+      height: 36px;
+      background: #115740;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.5px;
+    }
+    .page-header h1 { font-size: 18px; font-weight: 600; color: var(--color-text-primary); }
+    .page-header p  { font-size: 13px; color: var(--color-text-secondary); }
+
+    /* ── Module wrapper ──────────────────────────────────────── */
+    /* id="bba-email-module" — this is the integration boundary.
+       Everything inside here is self-contained.               */
+    #bba-email-module {
+      background: var(--color-bg-surface);
+      border: 0.5px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    /* ── Tab bar ─────────────────────────────────────────────── */
+    .em-tab-bar {
+      display: flex;
+      border-bottom: 0.5px solid var(--color-border);
+      background: var(--color-bg-surface);
+    }
+    .em-tab {
+      padding: 14px 22px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      border-bottom: 2px solid transparent;
+      background: none;
+      color: var(--color-text-secondary);
+      transition: color 0.15s;
+    }
+    .em-tab.active {
+      color: var(--color-text-primary);
+      border-bottom-color: var(--color-text-primary);
+    }
+    .em-tab:hover:not(.active) { color: var(--color-text-primary); }
+
+    /* ── Panels ──────────────────────────────────────────────── */
+    .em-panel { display: none; padding: 1.75rem; }
+    .em-panel.active { display: block; }
+
+    /* ── Form elements ───────────────────────────────────────── */
+    .em-section {
+      background: var(--color-bg-surface);
+      border: 0.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .em-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-secondary);
+      margin-bottom: 1rem;
+    }
+    .em-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .em-field { margin-bottom: 1rem; }
+    .em-field:last-child { margin-bottom: 0; }
+    .em-field label {
+      display: block;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-bottom: 6px;
+    }
+    .em-field input,
+    .em-field select,
+    .em-field textarea {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 0.5px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .em-field input:focus,
+    .em-field select:focus,
+    .em-field textarea:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(24,95,165,0.12);
+    }
+    .em-field textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+
+    /* Category buttons */
+    .em-cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .em-cat-btn {
+      padding: 10px 14px;
+      border: 0.5px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .em-cat-btn:hover { background: var(--color-bg-muted); }
+    .em-cat-btn.selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-bg);
+      color: var(--color-accent-text);
+    }
+
+    /* Submit */
+    .em-submit {
+      width: 100%;
+      padding: 13px;
+      background: #115740; /* W&M green — swap if needed */
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      margin-top: 0.25rem;
+    }
+    .em-submit:hover { opacity: 0.88; }
+
+    /* Email preview */
+    .em-preview {
+      display: none;
+      background: var(--color-bg-muted);
+      border: 0.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-size: 13px;
+    }
+    .em-preview.show { display: block; }
+    .em-preview-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .em-preview-row { display: flex; gap: 8px; margin-bottom: 4px; }
+    .em-preview-key { color: var(--color-text-secondary); min-width: 52px; }
+    .em-preview-body {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 0.5px solid var(--color-border);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    /* ── Staff inbox ─────────────────────────────────────────── */
+    .em-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .em-stat {
+      background: var(--color-bg-muted);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+    }
+    .em-stat-num { font-size: 22px; font-weight: 600; color: var(--color-text-primary); }
+    .em-stat-lbl { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+
+    .em-filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .em-chip {
+      padding: 5px 13px;
+      border: 0.5px solid var(--color-border-strong);
+      border-radius: 99px;
+      font-size: 12px;
+      cursor: pointer;
+      background: var(--color-bg-surface);
+      color: var(--color-text-secondary);
+      transition: all 0.15s;
+    }
+    .em-chip:hover { background: var(--color-bg-muted); }
+    .em-chip.active {
+      background: var(--color-text-primary);
+      color: var(--color-bg-surface);
+      border-color: var(--color-text-primary);
+    }
+
+    .em-email-row {
+      background: var(--color-bg-surface);
+      border: 0.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: background 0.12s;
+    }
+    .em-email-row:hover { background: var(--color-bg-muted); }
+    .em-email-row.unread { border-left: 3px solid var(--color-accent); }
+
+    .em-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .em-email-meta { flex: 1; min-width: 0; }
+    .em-email-top  { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+    .em-email-name { font-size: 13px; font-weight: 600; }
+    .em-email-time { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
+    .em-email-subject { font-size: 13px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .em-email-foot  { display: flex; align-items: center; gap: 8px; }
+    .em-email-snippet { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Badges */
+    .em-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 9px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-transfer    { background:#E6F1FB; color:#185FA5; }
+    .badge-evaluation  { background:#FAEEDA; color:#854F0B; }
+    .badge-guidance    { background:#E1F5EE; color:#0F6E56; }
+    .badge-passfail    { background:#EEEDFE; color:#534AB7; }
+    .badge-graduation  { background:#FBEAF0; color:#993556; }
+    .badge-general     { background:#F1EFE8; color:#5F5E5A; }
+    .badge-urgent      { background:#FCEBEB; color:#A32D2D; }
+
+    /* Detail pane */
+    .em-detail {
+      display: none;
+      background: var(--color-bg-surface);
+      border: 0.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-top: 0.5rem;
+    }
+    .em-detail.show { display: block; }
+    .em-detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .em-detail-subject { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .em-detail-meta    { font-size: 13px; color: var(--color-text-secondary); }
+    .em-close { font-size: 16px; cursor: pointer; color: var(--color-text-secondary); background: none; border: none; padding: 4px; }
+    .em-detail-body {
+      font-size: 13px;
+      line-height: 1.75;
+      padding: 12px 14px;
+      background: var(--color-bg-muted);
+      border-radius: var(--radius-md);
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .em-action-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .em-action {
+      padding: 7px 16px;
+      border: 0.5px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      cursor: pointer;
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+      transition: background 0.12s;
+    }
+    .em-action:hover { background: var(--color-bg-muted); }
+    .em-action.primary {
+      background: #115740;
+      color: #fff;
+      border-color: #115740;
+    }
+    .em-action.primary:hover { opacity: 0.88; }
+
+    /* ── FAQ Match Banner ───────────────────────────────────── */
+    .em-faq-banner {
+      display: none;
+      background: #EAF4EC;
+      border: 1px solid #A8D5B0;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin: 0.75rem 0;
+    }
+    .em-faq-banner.show { display: block; }
+    .em-faq-banner-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .em-faq-icon {
+      width: 20px; height: 20px;
+      background: #115740;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .em-faq-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #0A4A2E;
+    }
+    .em-faq-confidence {
+      margin-left: auto;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 500;
+    }
+    .em-faq-confidence.strong   { background:#115740; color:#fff; }
+    .em-faq-confidence.possible { background:#C8E6C9; color:#1B5E20; }
+    .em-faq-match-title {
+      font-size: 12px;
+      color: #1B5E20;
+      font-style: italic;
+      margin-bottom: 4px;
+      padding-left: 28px;
+    }
+
+    /* ── Draft Reply Area ────────────────────────────────────── */
+    .em-draft-area {
+      display: none;
+      margin-top: 1rem;
+      border-top: 0.5px solid var(--color-border);
+      padding-top: 1rem;
+    }
+    .em-draft-area.show { display: block; }
+    .em-draft-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+    }
+    .em-draft-textarea {
+      width: 100%;
+      min-height: 160px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.65;
+      border: 0.5px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+      resize: vertical;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .em-draft-textarea:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(24,95,165,0.12);
+    }
+    .em-draft-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .em-grid-2     { grid-template-columns: 1fr; }
+      .em-stats-row  { grid-template-columns: repeat(2, 1fr); }
+      .em-cat-grid   { grid-template-columns: 1fr; }
+      .em-urgency-row { flex-direction: column; }
+      body           { padding: 1rem; }
+    }
+  
 </style>
 </head>
 <body>
@@ -350,6 +869,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
     <button class="tab-btn"        id="tab-transfer" onclick="showTab('transfer')">Transfer Credits</button>
     <button class="tab-btn"        id="tab-faq"      onclick="showTab('faq')">FAQ</button>
     <button class="tab-btn"        id="tab-guidance" onclick="showTab('guidance')">Guidance &amp; Advising</button>
+    <button class="tab-btn" id="tab-contact" onclick="showTab('contact')">Contact BBA Office</button>
   </nav>
 </header>
 
@@ -5075,7 +5595,7 @@ function gReset() {
 </script>
 <script>
 // ── TAB ROUTING ──────────────────────────────────────────────────────────────
-const TABS = ['home','transfer','faq','guidance'];
+const TABS = ['home','transfer','faq','guidance','contact'];
 
 function showTab(id) {
   TABS.forEach(t => {
@@ -5089,6 +5609,7 @@ function showTab(id) {
   if (id === 'transfer') tcRefresh();
   if (id === 'faq')      faqRefresh();
   if (id === 'guidance') gSetStep(1);
+  if (id === 'contact')  { document.getElementById('em-preview').style.display='none'; }
   // update URL hash without scroll jump
   history.replaceState(null, '', '#' + id);
 }
@@ -5210,5 +5731,95 @@ function stuReset() {
   });
 })();
 </script>
+
+<!-- CONTACT BBA OFFICE -->
+<section id="contact" class="page-wrap" style="display:none">
+  <p class="page-eyebrow">BBA Office</p>
+  <h1 class="page-title">Contact BBA Office</h1>
+  <p class="page-sub">Submit a question or request directly to the BBA Office. Your email will be sent to <strong>bba@mason.wm.edu</strong> and a staff member will follow up within 1–2 business days.</p>
+
+  <div id="bba-student-contact" style="max-width:680px">
+
+    <div class="em-section">
+      <div class="em-section-label">Your information</div>
+      <div class="em-grid-2">
+        <div class="em-field">
+          <label>Full name</label>
+          <input type="text" id="em-name" placeholder="e.g. Jordan Smith" />
+        </div>
+        <div class="em-field">
+          <label>W&amp;M Email</label>
+          <input type="email" id="em-email" placeholder="jsmith@wm.edu" />
+        </div>
+      </div>
+      <div class="em-grid-2">
+        <div class="em-field">
+          <label>Student ID <span style="color:var(--red)">*</span></label>
+          <input type="text" id="em-sid" placeholder="W00000000" />
+        </div>
+        <div class="em-field">
+          <label>Major / Concentration</label>
+          <input type="text" id="em-major" placeholder="e.g. Finance" />
+        </div>
+      </div>
+    </div>
+
+    <div class="em-section">
+      <div class="em-section-label">Request category</div>
+      <div class="em-cat-grid">
+        <button class="em-cat-btn" onclick="emSelectCat(this,'Transfer inquiry')">&#128196; Transfer inquiry</button>
+        <button class="em-cat-btn" onclick="emSelectCat(this,'Course evaluation')">&#128203; Course evaluation</button>
+        <button class="em-cat-btn" onclick="emSelectCat(this,'Pass/fail request')">&#9989; Pass / fail request</button>
+        <button class="em-cat-btn" onclick="emSelectCat(this,'Course guidance')">&#128214; Course guidance</button>
+        <button class="em-cat-btn" onclick="emSelectCat(this,'Graduation timeline')">&#127891; Graduation timeline</button>
+        <button class="em-cat-btn" onclick="emSelectCat(this,'General question')">&#128172; General question</button>
+      </div>
+    </div>
+
+    <div class="em-section">
+      <div class="em-section-label">Details</div>
+      <div class="em-field">
+        <label>Subject</label>
+        <input type="text" id="em-subject" placeholder="Brief description of your request" />
+      </div>
+      <div class="em-field">
+        <label>Message</label>
+        <textarea id="em-body" placeholder="Please provide as much detail as possible — include course codes, dates, or any relevant context..."></textarea>
+      </div>
+    </div>
+
+    <button class="em-submit" onclick="emSubmit()">Generate &amp; preview email</button>
+
+    <div class="em-preview" id="em-preview" style="margin-top:16px">
+      <div class="em-preview-label">Email preview — review before sending</div>
+      <div class="em-preview-row">
+        <span class="em-preview-key">To:</span>
+        <span>bba@mason.wm.edu</span>
+      </div>
+      <div class="em-preview-row">
+        <span class="em-preview-key">From:</span>
+        <span id="em-prev-from">—</span>
+      </div>
+      <div class="em-preview-row">
+        <span class="em-preview-key">Subject:</span>
+        <span id="em-prev-subject">—</span>
+      </div>
+      <div class="em-preview-body" id="em-prev-body">—</div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm" onclick="emSendEmail()">Send via email client</button>
+        <button class="btn btn-ghost btn-sm" onclick="emCopyEmail()">Copy to clipboard</button>
+        <button class="btn btn-ghost btn-sm" onclick="emResetForm()">Start over</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:28px;padding:16px 18px;background:var(--cream-dk);border-radius:var(--r);font-size:13px;color:var(--mid);line-height:1.7;max-width:680px">
+    <strong style="color:var(--text)">Prefer to reach us another way?</strong><br>
+    Walk-in hours: Mon &amp; Wed 9am–12pm, Tue 1–3pm &nbsp;·&nbsp; Miller Hall Suite 2013<br>
+    Email directly: <a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a>
+    &nbsp;·&nbsp; <a href="student.html#guidance" onclick="showTab('guidance');return false;" style="color:var(--blue)">Book an advising appointment</a>
+  </div>
+</section>
 </body>
 </html>

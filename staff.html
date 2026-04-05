@@ -798,10 +798,19 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 <!-- ── AUTH GATE: custom login screen, no modal, no X button ── -->
 <style>
 #auth-screen {
-  position:fixed; inset:0; z-index:99999;
+  position:fixed; inset:0; z-index:9000;
   background:#F5F0E8;
   display:flex; align-items:center; justify-content:center;
   font-family:'Inter',sans-serif;
+  transition: opacity 0.15s;
+}
+#auth-screen.modal-open {
+  /* Step back so Netlify modal (which renders at very high z-index) is clickable */
+  background: rgba(245,240,232,0.15);
+  pointer-events: none;
+}
+#auth-screen.modal-open .box {
+  pointer-events: all;
 }
 #auth-screen .box {
   background:white; border:1px solid #DDD8CE; border-radius:14px;
@@ -889,8 +898,21 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
       showError('Authentication unavailable. Try opening this page from the live site.');
       return;
     }
+    // Step the auth screen back so the Netlify modal is fully clickable
+    var screen = document.getElementById('auth-screen');
+    if (screen) screen.classList.add('modal-open');
     netlifyIdentity.open('login');
   };
+
+  // When Netlify modal closes without login, restore auth screen
+  if (typeof netlifyIdentity !== 'undefined') {
+    netlifyIdentity.on('close', function() {
+      var screen = document.getElementById('auth-screen');
+      if (screen && !netlifyIdentity.currentUser()) {
+        screen.classList.remove('modal-open');
+      }
+    });
+  }
 
   if (typeof netlifyIdentity !== 'undefined') {
 
