@@ -337,12 +337,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 <section id="planning" class="page-wrap" style="display:none">
   <p class="page-eyebrow">BBA Office</p>
   <h1 class="page-title">Course Planning</h1>
-  <p class="page-sub">Plan your course schedule using the official W&amp;M worksheet format. Fill out the form below, then download as PDF or Excel. Your completed plan is also sent to the BBA Office inbox so your advisor can review it before your meeting.</p>
+  <p class="page-sub">Plan your course schedule using the official W&M worksheet format. Fill out below, then download as PDF or Excel — your plan is also sent to the BBA Office inbox.</p>
 
   <!-- RESOURCE LINKS -->
   <div class="card" style="margin-bottom:18px">
     <div class="card-hd">
-      <div><div class="card-title">2025–2026 Planning Resources</div><div class="card-sub">Direct links to official mason.wm.edu documents — updated each academic year</div></div>
+      <div><div class="card-title">2025–2026 Planning Resources</div><div class="card-sub">Official mason.wm.edu documents</div></div>
     </div>
     <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
       <a href="https://mason.wm.edu/undergraduate/documents/business-majors-curriculum-guide-2025-2026.pdf" target="_blank" class="qlk">
@@ -358,7 +358,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
       <a href="https://mason.wm.edu/undergraduate/documents/course-planning-worksheet.pdf" target="_blank" class="qlk">
         <div style="font-size:20px;margin-bottom:6px">📝</div>
         <div style="font-weight:600;font-size:13px">Official Course Planning Worksheet</div>
-        <div class="qlk-sub">Blank PDF form · mason.wm.edu ↗</div>
+        <div class="qlk-sub">Blank PDF · mason.wm.edu ↗</div>
       </a>
     </div>
   </div>
@@ -368,7 +368,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
     <div class="card-hd">
       <div>
         <div class="card-title">Interactive Course Planning Worksheet</div>
-        <div class="card-sub">Mirrors the official W&amp;M format — fill out and download or send to your advisor</div>
+        <div class="card-sub">Fill in your courses by semester — download or send to your advisor</div>
       </div>
       <div style="display:flex;gap:8px">
         <button class="act-btn primary" onclick="downloadPlanPDF()">⬇ Download PDF</button>
@@ -377,22 +377,20 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
     </div>
     <div class="card-body">
 
-      <!-- STUDENT INFO — mirrors top of official worksheet -->
+      <!-- STUDENT INFO -->
       <div style="margin-bottom:20px">
         <div class="page-eyebrow" style="margin-bottom:10px">Student information</div>
         <div class="form-grid fg2">
-          <div class="fgrp">
-            <label>Name <span class="required-star">*</span></label>
-            <input id="pl-name" placeholder="e.g. Jordan Smith">
-          </div>
-          <div class="fgrp">
-            <label>WM ID# <span class="required-star">*</span></label>
-            <input id="pl-sid" placeholder="W00000000">
-          </div>
+          <div class="fgrp"><label>Full Name</label><input id="pl-name" placeholder="e.g. Jordan Smith"></div>
+          <div class="fgrp"><label>Student ID</label><input id="pl-sid" placeholder="W00000000"></div>
+        </div>
+        <div class="form-grid fg2">
+          <div class="fgrp"><label>W&amp;M Email</label><input id="pl-email" type="email" placeholder="username@wm.edu"></div>
+          <div class="fgrp"><label>Advisor</label><input id="pl-advisor" placeholder="e.g. Terry Hinders"></div>
         </div>
         <div class="form-grid fg3">
           <div class="fgrp">
-            <label>Major(s) <span class="required-star">*</span></label>
+            <label>Major</label>
             <select id="pl-major">
               <option value="">Select major</option>
               <option>Accounting</option>
@@ -406,66 +404,221 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
             <label>Concentration</label>
             <select id="pl-conc">
               <option value="">None / undecided</option>
-              <option>Accounting</option>
-              <option>Finance</option>
-              <option>Marketing</option>
-              <option>Business Analytics</option>
-              <option>Consulting</option>
+              <option>Accounting</option><option>Finance</option><option>Marketing</option>
+              <option>Business Analytics</option><option>Consulting</option>
               <option>Management &amp; Org Leadership</option>
-              <option>Supply Chain Analytics</option>
-              <option>Sustainability</option>
+              <option>Supply Chain Analytics</option><option>Sustainability</option>
             </select>
           </div>
           <div class="fgrp">
-            <label>Minor</label>
-            <input id="pl-minor" placeholder="e.g. Economics">
+            <label>Expected Graduation</label>
+            <select id="pl-grad">
+              <option value="">Select term</option>
+              <option>Spring 2025</option><option>Fall 2025</option>
+              <option>Spring 2026</option><option>Fall 2026</option>
+              <option>Spring 2027</option><option>Fall 2027</option>
+              <option>Spring 2028</option><option>Fall 2028</option>
+            </select>
           </div>
-        </div>
-        <div class="form-grid fg2">
-          <div class="fgrp">
-            <label>Credits at end of this semester <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--lt)">("Credits Applied" from DegreeWorks)</span></label>
-            <input id="pl-credits-now" type="number" placeholder="e.g. 45" min="0" max="120">
-          </div>
-          <div class="fgrp">
-            <label>W&amp;M Email</label>
-            <input id="pl-email" type="email" placeholder="username@wm.edu">
-          </div>
-        </div>
-        <div style="background:var(--cream-dk);border-radius:var(--r);padding:11px 14px;font-size:12px;color:var(--mid);line-height:1.6">
-          Add all future planned semesters together with your "credits applied" from DegreeWorks. You need <strong>120 credits</strong> to graduate (transfer students need at least 60 credits at W&amp;M).
         </div>
       </div>
 
       <hr>
 
-      <!-- SEMESTER BLOCKS — Fall / Spring / Summer like the official PDF -->
+      <!-- SEMESTER PLAN -->
       <div style="margin-bottom:18px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
           <div class="page-eyebrow">Course plan by semester</div>
-          <div id="pl-total-display" style="font-size:13px;color:var(--green);font-weight:600"></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <select id="add-sem-select" style="padding:7px 12px;border:1px solid var(--border);border-radius:7px;font-family:Inter,sans-serif;font-size:13px;color:var(--mid);background:var(--white);outline:none">
+              <option value="">Add a semester…</option>
+              <option value="s25">Spring 2025</option>
+              <option value="su25">Summer 2025</option>
+              <option value="f25">Fall 2025</option>
+              <option value="s26">Spring 2026</option>
+              <option value="su26">Summer 2026</option>
+              <option value="f26">Fall 2026</option>
+              <option value="s27">Spring 2027</option>
+              <option value="su27">Summer 2027</option>
+              <option value="f27">Fall 2027</option>
+              <option value="s28">Spring 2028</option>
+              <option value="su28">Summer 2028</option>
+              <option value="f28">Fall 2028</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" type="button" onclick="(function(){var sel=document.getElementById('add-sem-select');if(!sel||!sel.value)return;var el=document.getElementById('plsem-'+sel.value);if(el){el.style.display='block';}sel.value='';})()">+ Add</button>
+          </div>
         </div>
-        <div id="plan-semesters"></div>
-        <button class="btn btn-ghost btn-sm" onclick="addSemester()" style="margin-top:10px">+ Add semester</button>
+        <div id="plsem-s25" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Spring 2025</span>
+            <button type="button" onclick="document.getElementById('plsem-s25').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-su25" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Summer 2025</span>
+            <button type="button" onclick="document.getElementById('plsem-su25').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-f25" style="display:block;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Fall 2025</span>
+            <button type="button" onclick="document.getElementById('plsem-f25').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-s26" style="display:block;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Spring 2026</span>
+            <button type="button" onclick="document.getElementById('plsem-s26').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-su26" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Summer 2026</span>
+            <button type="button" onclick="document.getElementById('plsem-su26').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-f26" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Fall 2026</span>
+            <button type="button" onclick="document.getElementById('plsem-f26').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-s27" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Spring 2027</span>
+            <button type="button" onclick="document.getElementById('plsem-s27').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-su27" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Summer 2027</span>
+            <button type="button" onclick="document.getElementById('plsem-su27').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-f27" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Fall 2027</span>
+            <button type="button" onclick="document.getElementById('plsem-f27').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-s28" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Spring 2028</span>
+            <button type="button" onclick="document.getElementById('plsem-s28').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-su28" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Summer 2028</span>
+            <button type="button" onclick="document.getElementById('plsem-su28').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
+        <div id="plsem-f28" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:var(--cream-dk);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Fall 2028</span>
+            <button type="button" onclick="document.getElementById('plsem-f28').style.display='none'" style="font-size:11px;color:var(--lt);background:none;border:none;cursor:pointer;font-family:Inter,sans-serif">Remove</button>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt)">Course</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--lt);text-align:center">Credits</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div><div style="display:flex;gap:8px;margin-bottom:6px"><input style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing"><input type="number" style="width:60px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6"></div>
+          </div>
+        </div>
       </div>
 
       <hr>
 
       <!-- NOTES -->
-      <div>
+      <div style="margin-bottom:4px">
         <div class="page-eyebrow" style="margin-bottom:8px">Notes for advisor</div>
         <div class="fgrp">
-          <textarea id="pl-notes" style="min-height:80px" placeholder="Any questions, concerns, or additional context your advisor should know before the meeting…"></textarea>
+          <textarea id="pl-notes" style="min-height:80px" placeholder="Any questions, concerns, or context for your advisor…"></textarea>
         </div>
       </div>
 
-      <div class="btn-row" style="margin-top:18px">
-        <button class="btn btn-green btn-lg" onclick="downloadPlanPDF()">⬇ Download PDF</button>
-        <button class="btn btn-ghost btn-lg" onclick="downloadPlanExcel()">⬇ Download Excel &amp; send to inbox</button>
-      </div>
-      <p style="font-size:11.5px;color:var(--lt);margin-top:8px">Downloading Excel also opens your email client pre-addressed to bba@mason.wm.edu with your full plan — so it lands in the staff inbox automatically.</p>
-
     </div>
   </div>
+
 </section>
 
 <script>
@@ -559,6 +712,47 @@ function addSemester() {
   planSemesters.push({ term: next, type: type, courses: [{name:'',credits:''}] });
   renderSemesters();
 }
+function addSemesterFromDropdown() {
+  var sel = document.getElementById('add-sem-select');
+  if (!sel || !sel.value) return;
+  var term = sel.value;
+  var id   = 'sem-' + term.replace(/ /g, '-');
+
+  // If already exists just show it
+  var existing = document.getElementById(id);
+  if (existing) {
+    existing.style.display = 'block';
+    sel.value = '';
+    return;
+  }
+
+  // Build semester block entirely in plain HTML — no external functions needed
+  var rows = '';
+  for (var i = 0; i < 5; i++) {
+    rows += '<div style="display:flex;gap:8px;margin-bottom:6px">'
+      + '<input style="flex:1;padding:7px 10px;border:1px solid #DDD8CE;border-radius:6px;font-size:13px;font-family:Inter,sans-serif" placeholder="e.g. BUAD 311 Marketing">'
+      + '<input type="number" style="width:60px;padding:7px 8px;border:1px solid #DDD8CE;border-radius:6px;font-size:13px;text-align:center" placeholder="cr" min="1" max="6">'
+      + '</div>';
+  }
+
+  var html = '<div id="' + id + '" style="margin-bottom:14px;border:1px solid #DDD8CE;border-radius:8px;overflow:hidden">'
+    + '<div style="background:#EDE8DC;padding:9px 14px;display:flex;align-items:center;justify-content:space-between">'
+      + '<span style="font-size:12px;font-weight:600;color:#1C1C1C">' + term + '</span>'
+      + '<button type="button" style="font-size:10px;color:#8A8A8A;background:none;border:none;cursor:pointer;font-family:Inter,sans-serif" '
+        + 'onclick="var p=this.parentElement.parentElement;p.style.display='none'">Remove</button>'
+    + '</div>'
+    + '<div style="padding:10px 14px">' + rows + '</div>'
+  + '</div>';
+
+  var container = document.getElementById('plan-semesters');
+  if (!container) return;
+
+  var tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  container.appendChild(tmp.firstElementChild);
+  sel.value = '';
+}
+
 
 function removeSemester(i) {
   planSemesters.splice(i, 1);
