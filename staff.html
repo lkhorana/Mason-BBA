@@ -25,6 +25,10 @@
   } else {
     // Valid Supabase session — reveal the page
     document.documentElement.style.visibility = 'visible'
+    // Expose staff email globally so audit logging can use it
+    window._staffEmail = session.user.email;
+    window._supabaseKey = 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe';
+    window._supabaseUrl = 'https://uxukblmzshpqlcdlthzb.supabase.co';
   }
 </script>
 
@@ -6334,6 +6338,22 @@ setInterval(loadSheetData, 60000);
       emDraftVisible = false;
       emStats();
       emRender();
+      // Audit log — record which staff member viewed which student email
+      if (window._staffEmail && window._supabaseUrl) {
+        fetch(window._supabaseUrl + '/rest/v1/access_log', {
+          method: 'POST',
+          headers: {
+            'apikey': window._supabaseKey,
+            'Authorization': 'Bearer ' + window._supabaseKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            staff_email: window._staffEmail,
+            action: 'viewed_email',
+            record_id: String(id)
+          })
+        }).catch(function(){});
+      }
       // Scroll detail into view
       var detail = document.getElementById('em-detail');
       if (detail) detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
