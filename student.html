@@ -462,7 +462,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
         <button class="btn btn-green btn-lg" onclick="downloadPlanPDF()">⬇ Download PDF</button>
         <button class="btn btn-ghost btn-lg" onclick="downloadPlanExcel()">⬇ Download Excel &amp; send to inbox</button>
       </div>
-      <p style="font-size:11.5px;color:var(--lt);margin-top:8px">Downloading Excel also opens your email client pre-addressed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f4969695b49995879b9ada8399da919081">[email&#160;protected]</a> with your full plan — so it lands in the staff inbox automatically.</p>
+      <p style="font-size:11.5px;color:var(--lt);margin-top:8px">Downloading Excel also opens your email client pre-addressed to bba@mason.wm.edu with your full plan — so it lands in the staff inbox automatically.</p>
 
     </div>
   </div>
@@ -595,7 +595,7 @@ function getPlanData() {
 /* ── PDF — printable page matching official worksheet layout ── */
 function downloadPlanPDF() {
   var d = getPlanData();
-  if (!d.name || !d.sid) { alert('Please enter your Name and WM ID# first.'); return; }
+  // Name/ID optional — generate PDF with whatever is filled in
 
   var semHTML = d.semesters.map(function(sem) {
     var rows = sem.courses.map(function(c) {
@@ -680,7 +680,7 @@ function downloadPlanPDF() {
 
 function downloadPlanExcel() {
   var d = getPlanData();
-  if (!d.name || !d.sid) { alert('Please enter your Name and Student ID first.'); return; }
+  // Name/ID optional — download whatever is filled in
   var rows = [
     ['Course Planning Worksheet — Mason School of Business'],
     ['Generated:', d.date],
@@ -737,7 +737,7 @@ function downloadPlanExcel() {
 /* ── Excel/CSV — structured spreadsheet matching PDF layout ── */
 function downloadPlanExcel() {
   var d = getPlanData();
-  if (!d.name || !d.sid) { alert('Please enter your Name and WM ID# first.'); return; }
+  // Name/ID optional — generate PDF with whatever is filled in
 
   var creditsNow     = parseInt(d.creditsNow) || 0;
   var creditsPlanned = d.semesters.reduce(function(sum,sem){
@@ -1332,14 +1332,14 @@ if (document.readyState === 'loading') {
         <a href="student.html#transfer" class="qlk">Check a Transfer Credit Decision<div class="qlk-sub">360 decisions from 108 institutions on file</div></a>
         <a href="student.html#faq"      class="qlk">Search the FAQ<div class="qlk-sub">65 answers from Blackboard + mason.wm.edu</div></a>
         <a href="student.html#guidance" class="qlk">Book an Advising Appointment<div class="qlk-sub">4-step form — Calendly pre-filled for you</div></a>
-        <a href="/cdn-cgi/l/email-protection#7f1d1d1e3f121e0c1011510812511a1b0a" class="qlk">Email the BBA Office<div class="qlk-sub"><span class="__cf_email__" data-cfemail="75171714351814061a1b5b02185b101100">[email&#160;protected]</span></div></a>
+        <a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a>
       </div>
       <div class="sidebar-card" style="margin-top:16px">
         <div class="sc-hd">Office hours</div>
         <div class="sc-row"><span class="sc-label">Walk-in hours</span><span class="sc-val">Mon &amp; Wed 9am–12pm</span></div>
         <div class="sc-row"><span class="sc-label"></span><span class="sc-val">Tue 1pm–3pm</span></div>
         <div class="sc-row"><span class="sc-label">Location</span><span class="sc-val">Miller Hall Suite 2013</span></div>
-        <div class="sc-row"><span class="sc-label">Email</span><span class="sc-val" style="color:var(--blue)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="482a2a290825293b2726663f25662d2c3d">[email&#160;protected]</a></span></div>
+        <div class="sc-row"><span class="sc-label">Email</span><span class="sc-val" style="color:var(--blue)"><a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a></span></div>
       </div>
     </div>
   </div>
@@ -1503,7 +1503,7 @@ if (document.readyState === 'loading') {
   <div style="text-align:center;margin-top:22px;padding:20px;background:var(--cream-dk);border-radius:var(--r)">
     <p style="font-size:13px;color:var(--mid);margin-bottom:12px">Still have a question? Reach out or book an appointment.</p>
     <div class="btn-row" style="justify-content:center">
-      <a href="/cdn-cgi/l/email-protection#1a78787b5a777b697574346d77347f7e6f" class="btn btn-green">Email <span class="__cf_email__" data-cfemail="ceacacaf8ea3afbda1a0e0b9a3e0abaabb">[email&#160;protected]</span></a>
+      <a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a>
       <a href="student.html#guidance"   class="btn btn-ghost">Book an Appointment</a>
     </div>
   </div>
@@ -1667,7 +1667,7 @@ if (document.readyState === 'loading') {
           <button class="cal-btn" onclick="gOpenCal()">Schedule Now &rarr;</button>
         </div>
         <p style="font-size:12px;color:var(--lt);margin-top:12px;line-height:1.6">
-          Bring any attachments to the appointment or email them to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="23414142634e42504c4d0d544e0d464756">[email&#160;protected]</a> in advance.<br>
+          Bring any attachments to the appointment or email them to bba@mason.wm.edu in advance.<br>
           Walk-in hours: Mon &amp; Wed 9am–12pm, Tue 1–3pm · Miller Hall Suite 2013.
         </p>
         <div class="gs-foot">
@@ -6228,7 +6228,7 @@ setInterval(loadSheetData, 60000);
 <section id="contact" class="page-wrap" style="display:none">
   <p class="page-eyebrow">BBA Office</p>
   <h1 class="page-title">Contact BBA Office</h1>
-  <p class="page-sub">Submit a question or request directly to the BBA Office. Your email will be sent to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3f5d5d5e7f525e4c5051114852115a5b4a">[email&#160;protected]</a></strong> and a staff member will follow up within 1–2 business days.</p>
+  <p class="page-sub">Submit a question or request directly to the BBA Office. Your email will be sent to <strong><a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a></strong> and a staff member will follow up within 1–2 business days.</p>
 
   <div style="max-width:680px">
 
@@ -6286,7 +6286,7 @@ setInterval(loadSheetData, 60000);
       <div class="em-preview-label">Email preview — sent to BBA office</div>
       <div class="em-preview-row">
         <span class="em-preview-key">To:</span>
-        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe9c9c9fbe939f8d9190d08993d09b9a8b">[email&#160;protected]</a></span>
+        <span><a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a></span>
       </div>
       <div class="em-preview-row">
         <span class="em-preview-key">From:</span>
