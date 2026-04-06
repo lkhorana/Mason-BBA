@@ -6519,99 +6519,71 @@ function emSelectCat(btn, cat) {
 
 
 
-function emSendEmail() {
-  if (!window._emSubject) { emSubmit(); }
-  if (!window._emSubject) return;
-
+function saveToStaffInbox() {
   var name  = (document.getElementById('em-name')  || {}).value || 'Student';
   var email = (document.getElementById('em-email') || {}).value || '';
   var sid   = (document.getElementById('em-sid')   || {}).value || '';
   var cat   = window.emSelectedCat || 'General question';
+  if (!window._emSubject) return;
 
-  // Save to Supabase so it appears in staff inbox on any device
   fetch('https://uxukblmzshpqlcdlthzb.supabase.co/rest/v1/student_emails', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'apikey': 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
+      'Content-Type':  'application/json',
+      'apikey':        'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
       'Authorization': 'Bearer sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
-      'Prefer': 'return=minimal'
+      'Prefer':        'return=representation'
     },
     body: JSON.stringify({
-      name:     name,
-      email:    email,
-      sid:      sid,
-      category: cat,
-      subject:  window._emSubject,
-      body:     window._emBody,
-      urgency:  'low',
-      unread:   true
+      name: name, email: email, sid: sid,
+      category: cat, subject: window._emSubject,
+      body: window._emBody, urgency: 'low', unread: true
     })
-  }).catch(function(){});
+  })
+  .then(function(r){
+    return r.json().then(function(data){
+      if (r.ok) {
+        console.log('Saved to staff inbox:', data);
+      } else {
+        console.error('Supabase insert failed:', JSON.stringify(data));
+      }
+    });
+  })
+  .catch(function(e){ console.error('Fetch error:', e); });
+}
 
-  // Open email client
+function emSendEmail() {
+  if (!window._emSubject) { emSubmit(); }
+  if (!window._emSubject) return;
+  saveToStaffInbox();
   window.location.href = 'mailto:bba@mason.wm.edu'
     + '?subject=' + encodeURIComponent(window._emSubject)
     + '&body='    + encodeURIComponent(window._emBody);
-
-  // Show confirmation
   var prev = document.getElementById('em-preview');
-  if (prev) {
+  if (prev && !prev.querySelector('.em-conf')) {
     var conf = document.createElement('div');
+    conf.className = 'em-conf';
     conf.style.cssText = 'margin-top:12px;background:#E6F2EF;border:1px solid #9FCEC7;border-radius:7px;padding:10px 14px;font-size:13px;color:#0F6B5A;line-height:1.5';
-    conf.innerHTML = '<strong>Sent!</strong> Your email app has opened with this message pre-filled — hit Send there to deliver it. Your request has also been logged in the BBA Office inbox.';
-    if (!prev.querySelector('.em-conf')) { conf.className='em-conf'; prev.appendChild(conf); }
+    conf.innerHTML = '<strong>Done!</strong> Your email app has opened — hit Send there to deliver it. Your message has been logged in the BBA Office inbox.';
+    prev.appendChild(conf);
   }
 }
 
 function emCopyEmail() {
   if (!window._emBody) { emSubmit(); }
   if (!window._emBody) return;
-
+  saveToStaffInbox();
   var text = 'To: bba@mason.wm.edu\nSubject: ' + window._emSubject + '\n\n' + window._emBody;
-
-  // Copy to clipboard
-  function doCopy() {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(function(){
-        showToast('Copied! Your message has also been sent to the BBA Office inbox.');
-      });
-    } else {
-      var ta = document.createElement('textarea');
-      ta.value = text; document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta);
-      showToast('Copied! Your message has also been sent to the BBA Office inbox.');
-    }
-  }
-
-  // Save to Supabase so it appears in staff inbox
-  try {
-    var name  = (document.getElementById('em-name')  || {}).value || 'Student';
-    var email = (document.getElementById('em-email') || {}).value || '';
-    var sid   = (document.getElementById('em-sid')   || {}).value || '';
-    var cat   = window.emSelectedCat || 'General question';
-
-    import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(function(mod) {
-      var sb = mod.createClient(
-        'https://uxukblmzshpqlcdlthzb.supabase.co',
-        'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
-      );
-      sb.from('student_emails').insert({
-        name:     name,
-        email:    email,
-        sid:      sid,
-        category: cat,
-        subject:  window._emSubject,
-        body:     window._emBody,
-        urgency:  'low',
-        unread:   true
-      }).then(function(res) {
-        if (res.error) console.warn('Supabase insert error:', res.error.message);
-      });
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function(){
+      showToast('Copied to clipboard! Your message is also logged in the BBA Office inbox.');
     });
-  } catch(e) { console.warn('Could not save to inbox:', e); }
-
-  doCopy();
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('Copied! Message logged in BBA Office inbox.');
+  }
 }
 
 function emResetForm() {
