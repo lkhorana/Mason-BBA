@@ -5606,7 +5606,7 @@ function showTab(id) {
   if (id === 'transfer') tcRefresh();
   if (id === 'faq')      { escRefresh(); kbRefresh(); }
   if (id === 'advising') { renderAppts(); gSetStep(1); }
-  if (id === 'email')    { emStats(); emRender(); }
+  if (id === 'email')    { emLoadStudentEmails(); emStats(); emRender(); }
   history.replaceState(null, '', '#' + id);
 }
 
@@ -5799,6 +5799,8 @@ function closeApptModal(ev) {
   const tab  = TABS.includes(hash) ? hash : 'overview';
   showTab(tab);
   updateEscStats();
+  emLoadStudentEmails();
+  setInterval(emLoadStudentEmails, 30000);
   // Wire any remaining internal links
   document.querySelectorAll('a[href^="staff.html#"]').forEach(function(a) {
     a.addEventListener('click', function(e) {
@@ -6179,7 +6181,49 @@ setInterval(loadSheetData, 60000);
     }
 
     /* ── Stats ───────────────────────────────────────────────── */
-    function emStats() {
+
+    /* ── Load emails submitted via student portal ───────── */
+    function emLoadStudentEmails() {
+  fetch('https://uxukblmzshpqlcdlthzb.supabase.co/rest/v1/student_emails?select=*&order=created_at.desc&limit=50', {
+    headers: {
+      'apikey': 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
+      'Authorization': 'Bearer sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
+    }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(rows) {
+    if (!Array.isArray(rows) || !rows.length) return;
+    var existingIds = emEmails.map(function(e){ return 'sb_' + e.id; });
+    var added = 0;
+    rows.forEach(function(row) {
+      var uid = 'sb_' + row.id;
+      if (existingIds.includes(uid)) return;
+      var name = row.name || 'Student';
+      emEmails.unshift({
+        id:         uid,
+        name:       name,
+        initials:   name.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(),
+        email:      row.email || '',
+        sid:        row.sid   || '',
+        subject:    row.subject || 'BBA inquiry',
+        body:       row.body    || '',
+        category:   row.category || 'General question',
+        urgency:    row.urgency  || 'low',
+        time:       new Date(row.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+        unread:     row.unread !== false,
+        avatarBg:   '#E6F1FB',
+        avatarColor:'#185FA5',
+        source:     'supabase'
+      });
+      existingIds.push(uid);
+      added++;
+    });
+    if (added > 0) { emStats(); emRender(); }
+  })
+  .catch(function(){});
+}
+
+        function emStats() {
       document.getElementById('em-stat-total').textContent   = emEmails.length;
       document.getElementById('em-stat-unread').textContent  = emEmails.filter(function(e){ return e.unread; }).length;
       document.getElementById('em-stat-urgent').textContent  = emEmails.filter(function(e){ return e.urgency === 'high'; }).length;
