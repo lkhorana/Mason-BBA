@@ -330,19 +330,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 }
 
 
-/* ── EMAIL MODULE — exact CSS from friend ── */
- tags goes into your main stylesheet
-     or inside a <style> block in the parent page.
 
-  2. COPY THE HTML:
-     The <div id="bba-email-module"> block replaces the current
-     email inbox placeholder tab content in the staff dashboard,
-     and the student form goes into the student-facing portal.
-
-  3. COPY THE JAVASCRIPT:
-     The <script> block at the bottom goes into your main JS file
-     or just before 
-
+</style>
 
 <!-- COURSE PLANNING -->
 <section id="planning" class="page-wrap" style="display:none">
@@ -473,14 +462,13 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
         <button class="btn btn-green btn-lg" onclick="downloadPlanPDF()">⬇ Download PDF</button>
         <button class="btn btn-ghost btn-lg" onclick="downloadPlanExcel()">⬇ Download Excel &amp; send to inbox</button>
       </div>
-      <p style="font-size:11.5px;color:var(--lt);margin-top:8px">Downloading Excel also opens your email client pre-addressed to bba@mason.wm.edu with your full plan — so it lands in the staff inbox automatically.</p>
+      <p style="font-size:11.5px;color:var(--lt);margin-top:8px">Downloading Excel also opens your email client pre-addressed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f4969695b49995879b9ada8399da919081">[email&#160;protected]</a> with your full plan — so it lands in the staff inbox automatically.</p>
 
     </div>
   </div>
 </section>
 
-<script>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ── COURSE PLANNING WORKSHEET ── */
 /* Mirrors the official W&M Course Planning Worksheet PDF structure */
 
@@ -687,7 +675,63 @@ function downloadPlanPDF() {
   a.href = url; a.target = '_blank';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
-  showToast('PDF opened — use Ctrl+P / Cmd+P to save as PDF.');
+  showToast('PDF ready — press Ctrl+P / Cmd+P to save as PDF.');
+}
+
+function downloadPlanExcel() {
+  var d = getPlanData();
+  if (!d.name || !d.sid) { alert('Please enter your Name and Student ID first.'); return; }
+  var rows = [
+    ['Course Planning Worksheet — Mason School of Business'],
+    ['Generated:', d.date],
+    [],
+    ['Student Name', d.name],
+    ['Student ID',   d.sid],
+    ['W&M Email',    d.email],
+    ['Advisor',      d.advisor || ''],
+    ['Major',        d.major   || ''],
+    ['Concentration',d.conc    || 'None'],
+    ['Graduation',   d.grad    || ''],
+    [],
+    ['COURSE PLAN BY SEMESTER'],
+  ];
+  d.semesters.forEach(function(sem) {
+    rows.push([sem.term]);
+    var courses = sem.courses.filter(function(c){ return (c.name||'').trim(); });
+    if (courses.length) {
+      courses.forEach(function(c,i){
+        rows.push(['  Course '+(i+1), c.name||'', c.credits||'', c.notes||'']);
+      });
+    } else { rows.push(['  (no courses entered)']); }
+    rows.push([]);
+  });
+  if (d.notes) { rows.push(['NOTES FOR ADVISOR']); rows.push([d.notes]); }
+  rows.push([]); rows.push(['Submitted by', d.name+' ('+d.sid+')', d.email]);
+  var csv = rows.map(function(r){
+    return r.map(function(v){ return '"'+String(v||'').replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url;
+  a.download = 'course-plan-'+d.name.replace(/\s+/g,'-').toLowerCase()+'-'+d.sid+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Excel downloaded!');
+  var subj = '[Course Planning] '+d.name+' ('+d.sid+') — '+(d.grad||'');
+  var body = 'Student: '+d.name+' | ID: '+d.sid+' | Email: '+d.email+'\n'
+    +'Major: '+(d.major||'—')+' | Conc: '+(d.conc||'None')+' | Grad: '+(d.grad||'—')+'\n\n'
+    +d.semesters.map(function(sem){
+      var cs=sem.courses.filter(function(c){return (c.name||'').trim();});
+      return sem.term+':\n'+(cs.length?cs.map(function(c){return '  - '+(c.name||'');}).join('\n'):'  (none)');
+    }).join('\n\n')
+    +(d.notes?'\n\nNotes: '+d.notes:'')
+    +'\n\n— Submitted via BBA Student Portal';
+  setTimeout(function(){
+    window.location.href='mailto:bba@mason.wm.edu'
+      +'?subject='+encodeURIComponent(subj)
+      +'&body='+encodeURIComponent(body);
+  }, 1000);
 }
 
 /* ── Excel/CSV — structured spreadsheet matching PDF layout ── */
@@ -793,6 +837,19 @@ function downloadPlanExcel() {
       + '&body='    + encodeURIComponent(emailBody);
   }, 800);
 
+  // Save submission to localStorage for staff portal
+  try {
+    var submissions = JSON.parse(localStorage.getItem('bba_plan_submissions') || '[]');
+    submissions.unshift({
+      ts: new Date().toISOString(),
+      name: d.name, sid: d.sid, email: d.email,
+      major: d.major, conc: d.conc, minor: d.minor,
+      creditsNow: creditsNow, creditsPlanned: creditsPlanned, creditsTotal: creditsTotal,
+      semesters: d.semesters, notes: d.notes
+    });
+    localStorage.setItem('bba_plan_submissions', JSON.stringify(submissions.slice(0, 100)));
+  } catch(e) {}
+
   showToast('Excel downloaded! Opening email to send to BBA Office…');
 }
 
@@ -803,19 +860,6 @@ if (document.readyState === 'loading') {
   renderSemesters();
 }
 </script>
-</body> in the parent page.
-
-  4. DATA INTEGRATION:
-     - Replace the `emails` array with a real API fetch once
-       Terry's shared inbox access is set up.
-     - The `submitForm()` function currently previews only —
-       wire it to your backend or mailto: handler as needed.
-     - See "// TODO:" comments throughout for integration hooks.
-
-  5. DEPENDENCIES:
-     None. Pure HTML/CSS/JS — no libraries required.
-  ============================================================
-  -->
 
   <style>
     /* ── Reset & base ───────────────────────────────────────── */
@@ -1288,14 +1332,14 @@ if (document.readyState === 'loading') {
         <a href="student.html#transfer" class="qlk">Check a Transfer Credit Decision<div class="qlk-sub">360 decisions from 108 institutions on file</div></a>
         <a href="student.html#faq"      class="qlk">Search the FAQ<div class="qlk-sub">65 answers from Blackboard + mason.wm.edu</div></a>
         <a href="student.html#guidance" class="qlk">Book an Advising Appointment<div class="qlk-sub">4-step form — Calendly pre-filled for you</div></a>
-        <a href="/cdn-cgi/l/email-protection#fa98989bba979b899594d48d97d49f9e8f" class="qlk">Email the BBA Office<div class="qlk-sub"><span class="__cf_email__" data-cfemail="ed8f8f8cad808c9e8283c39a80c3888998">[email&#160;protected]</span></div></a>
+        <a href="/cdn-cgi/l/email-protection#7f1d1d1e3f121e0c1011510812511a1b0a" class="qlk">Email the BBA Office<div class="qlk-sub"><span class="__cf_email__" data-cfemail="75171714351814061a1b5b02185b101100">[email&#160;protected]</span></div></a>
       </div>
       <div class="sidebar-card" style="margin-top:16px">
         <div class="sc-hd">Office hours</div>
         <div class="sc-row"><span class="sc-label">Walk-in hours</span><span class="sc-val">Mon &amp; Wed 9am–12pm</span></div>
         <div class="sc-row"><span class="sc-label"></span><span class="sc-val">Tue 1pm–3pm</span></div>
         <div class="sc-row"><span class="sc-label">Location</span><span class="sc-val">Miller Hall Suite 2013</span></div>
-        <div class="sc-row"><span class="sc-label">Email</span><span class="sc-val" style="color:var(--blue)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="73111112331e12001c1d5d041e5d161706">[email&#160;protected]</a></span></div>
+        <div class="sc-row"><span class="sc-label">Email</span><span class="sc-val" style="color:var(--blue)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="482a2a290825293b2726663f25662d2c3d">[email&#160;protected]</a></span></div>
       </div>
     </div>
   </div>
@@ -1422,7 +1466,7 @@ if (document.readyState === 'loading') {
         <div class="step-row"><div class="step-num">3</div><div class="step-body"><h4>Decision recorded</h4><p>The outcome is added to the BBA database and shared with the Registrar and Advising Center.</p></div></div>
       </div>
       <div class="btn-row" style="margin-top:16px">
-        <a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u&route=shorturl" target="_blank" class="btn btn-green">Submit Official Transfer Request Form</a>
+        <a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u" target="_blank" class="btn btn-green">Submit Official Transfer Request Form</a>
       </div>
     </div>
   </div>
@@ -1459,7 +1503,7 @@ if (document.readyState === 'loading') {
   <div style="text-align:center;margin-top:22px;padding:20px;background:var(--cream-dk);border-radius:var(--r)">
     <p style="font-size:13px;color:var(--mid);margin-bottom:12px">Still have a question? Reach out or book an appointment.</p>
     <div class="btn-row" style="justify-content:center">
-      <a href="/cdn-cgi/l/email-protection#1a78787b5a777b697574346d77347f7e6f" class="btn btn-green">Email <span class="__cf_email__" data-cfemail="42202023022f23312d2c6c352f6c272637">[email&#160;protected]</span></a>
+      <a href="/cdn-cgi/l/email-protection#1a78787b5a777b697574346d77347f7e6f" class="btn btn-green">Email <span class="__cf_email__" data-cfemail="ceacacaf8ea3afbda1a0e0b9a3e0abaabb">[email&#160;protected]</span></a>
       <a href="student.html#guidance"   class="btn btn-ghost">Book an Appointment</a>
     </div>
   </div>
@@ -1623,7 +1667,7 @@ if (document.readyState === 'loading') {
           <button class="cal-btn" onclick="gOpenCal()">Schedule Now &rarr;</button>
         </div>
         <p style="font-size:12px;color:var(--lt);margin-top:12px;line-height:1.6">
-          Bring any attachments to the appointment or email them to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c6a4a4a786aba7b5a9a8e8b1abe8a3a2b3">[email&#160;protected]</a> in advance.<br>
+          Bring any attachments to the appointment or email them to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="23414142634e42504c4d0d544e0d464756">[email&#160;protected]</a> in advance.<br>
           Walk-in hours: Mon &amp; Wed 9am–12pm, Tue 1–3pm · Miller Hall Suite 2013.
         </p>
         <div class="gs-foot">
@@ -1640,7 +1684,7 @@ if (document.readyState === 'loading') {
 <div class="toast" id="toast"></div>
 
 <!-- ── SCRIPTS ── -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── BBA PORTAL DATA FILE ──
 // Auto-generated from Blackboard + mason.wm.edu scraped content
 // FAQ: 65 answers | Transfer Credits: 360 records
@@ -5690,64 +5734,6 @@ const FAQ_CAT_ORDER = [
   'Fees','Majors & Minors','Transfer Credits','Careers & Resources'
 ];
 
-// ── GOOGLE SHEETS LIVE DATA ────────────────────────────────────────────────
-// Publish each sheet as CSV: File → Share → Publish to web → CSV
-// Paste the published CSV URLs below
-var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QLJe0i--bVH-KoH2TcFJK2kSdQ39SeuSVe3JSO6WKFk/export?format=csv&gid=1587720198';
-var TC_SHEET_URL  = 'https://docs.google.com/spreadsheets/d/1Y8zxe5i1e0rcQijw75IfrBo4ZpbQL2-pMRzIHTojz4Q/export?format=csv&gid=1178944391';
-
-function loadSheetData() {
-  // Load FAQ answers from Google Sheet
-  fetch(SHEET_CSV_URL)
-    .then(function(r){ return r.text(); })
-    .then(function(csv){
-      var rows = csv.split('\n').map(function(r){ return r.split(','); });
-      rows.forEach(function(row){
-        var id  = (row[0]||'').replace(/"/g,'').trim();
-        var ans = row.slice(1).join(',').replace(/^"|"$/g,'').trim();
-        if (!id || !ans) return;
-        var item = FAQ_DATA.find(function(q){ return q.id === id; });
-        if (item) item.a = ans;
-      });
-    }).catch(function(){});
-
-  // Load Transfer Credits from Google Sheet
-  fetch(TC_SHEET_URL)
-    .then(function(r){ return r.text(); })
-    .then(function(csv){
-      var rows = csv.split('\n');
-      var headers = rows[0].split(',').map(function(h){ return h.replace(/"/g,'').trim().toLowerCase(); });
-      var fresh = [];
-      rows.slice(1).forEach(function(line){
-        if (!line.trim()) return;
-        var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g) || [];
-        var obj  = {};
-        headers.forEach(function(h,i){ obj[h] = (cols[i]||'').replace(/^"|"$/g,'').trim(); });
-        if (obj.university || obj.uni) {
-          fresh.push({
-            uni:     obj.university || obj.uni || '',
-            course:  obj['course_code_and_name'] || obj.course || '',
-            equiv:   obj['wm_equivalent'] || obj.equiv || '',
-            expires: obj.expires || '',
-            days:    parseInt(obj.days_remaining || obj.days || '0') || 0,
-            flag:    obj.status_flag || obj.flag || 'Active',
-            syllabus:obj.syllabus_link || obj.syllabus || '',
-            notes:   obj.notes || ''
-          });
-        }
-      });
-      if (fresh.length > 0) {
-        TC_DATA.length = 0;
-        fresh.forEach(function(r){ TC_DATA.push(r); });
-      }
-    }).catch(function(){});
-}
-
-// Load on startup and refresh every 60 seconds
-loadSheetData();
-setInterval(loadSheetData, 60000);
-
-
 </script>
 <script>
 // ── SHARED UTILITIES ────────────────────────────────────────────────────────
@@ -6066,7 +6052,7 @@ function showTab(id) {
   if (id === 'transfer') tcRefresh();
   if (id === 'faq')      faqRefresh();
   if (id === 'guidance') gSetStep(1);
-  if (id === 'contact')  { var ep = document.getElementById('em-preview'); if(ep){ ep.classList.remove('show'); ep.style.display=''; } }
+  if (id === 'contact')  { var _ep=document.getElementById('em-preview'); if(_ep){_ep.classList.remove('show');_ep.style.display='';} }
   if (id === 'planning') { renderSemesters(); }
   // update URL hash without scroll jump
   history.replaceState(null, '', '#' + id);
@@ -6147,7 +6133,7 @@ function stuLookup() {
       ${expiryNote}
       <div class="result-acts">
         ${exp || notEq
-          ? `<a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u&route=shorturl" target="_blank" class="btn btn-green btn-sm">Submit New Request</a>`
+          ? `<a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u" target="_blank" class="btn btn-green btn-sm">Submit New Request</a>`
           : `<button class="btn btn-ghost btn-sm" onclick="window.open('mailto:bba@mason.wm.edu?subject=Transfer Credit Confirmation — ${encodeURIComponent(match.course)}')">Email BBA Office</button>`}
       </div>
     </div>`;
@@ -6161,7 +6147,7 @@ function stuLookup() {
       </p>
       ${!syl ? '<div class="alert alert-warn" style="margin-top:10px"><strong>Syllabus required.</strong> You must include your course syllabus when submitting the form — faculty cannot review without it.</div>' : ''}
       <div class="result-acts">
-        <a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u&route=shorturl" target="_blank" class="btn btn-green btn-sm">Submit Official Request Form</a>
+        <a href="https://forms.office.com/pages/responsepage.aspx?id=Prw8uR1mWECGk6iXuSS41x-qUw5EQzdDsDcjPhIRde5UOVhRWkRBT0swRUpKVlpOT1RDWElaTEY1Ti4u" target="_blank" class="btn btn-green btn-sm">Submit Official Request Form</a>
         ${syl ? `<a href="${esc(syl)}" target="_blank" class="btn btn-ghost btn-sm">Open Your Syllabus</a>` : ''}
       </div>
     </div>`;
@@ -6188,13 +6174,61 @@ function stuReset() {
     });
   });
 })();
+
+/* ── GOOGLE SHEETS LIVE DATA ── */
+var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QLJe0i--bVH-KoH2TcFJK2kSdQ39SeuSVe3JSO6WKFk/export?format=csv&gid=1587720198';
+var TC_SHEET_URL  = 'https://docs.google.com/spreadsheets/d/1Y8zxe5i1e0rcQijw75IfrBo4ZpbQL2-pMRzIHTojz4Q/export?format=csv&gid=1178944391';
+
+function loadSheetData() {
+  fetch(SHEET_CSV_URL)
+    .then(function(r){ return r.text(); })
+    .then(function(csv){
+      csv.split('\n').forEach(function(line){
+        var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g)||[];
+        var id   = (cols[0]||'').replace(/"/g,'').trim();
+        var ans  = (cols.slice(1).join(','))||'';
+        ans = ans.replace(/^"|"$/g,'').trim();
+        if (!id||!ans) return;
+        var item = FAQ_DATA.find(function(q){ return q.id===id; });
+        if (item) item.a = ans;
+      });
+    }).catch(function(){});
+
+  fetch(TC_SHEET_URL)
+    .then(function(r){ return r.text(); })
+    .then(function(csv){
+      var lines = csv.split('\n');
+      if (lines.length < 2) return;
+      var hdrs = lines[0].split(',').map(function(h){ return h.replace(/"/g,'').trim().toLowerCase().replace(/ /g,'_'); });
+      var fresh = [];
+      lines.slice(1).forEach(function(line){
+        if (!line.trim()) return;
+        var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g)||[];
+        var obj  = {};
+        hdrs.forEach(function(h,i){ obj[h]=(cols[i]||'').replace(/^"|"$/g,'').trim(); });
+        if (obj.university||obj.uni) fresh.push({
+          uni:     obj.university||obj.uni||'',
+          course:  obj.course_code_and_name||obj.course||'',
+          equiv:   obj.wm_equivalent||obj.equiv||'',
+          expires: obj.expires||'',
+          days:    parseInt(obj.days_remaining||obj.days||'0')||0,
+          flag:    obj.status_flag||obj.flag||'Active',
+          syllabus:obj.syllabus_link||obj.syllabus||'',
+          notes:   obj.notes||''
+        });
+      });
+      if (fresh.length>0){ TC_DATA.length=0; fresh.forEach(function(r){ TC_DATA.push(r); }); }
+    }).catch(function(){});
+}
+loadSheetData();
+setInterval(loadSheetData, 60000);
 </script>
 
 <!-- CONTACT BBA OFFICE -->
 <section id="contact" class="page-wrap" style="display:none">
   <p class="page-eyebrow">BBA Office</p>
   <h1 class="page-title">Contact BBA Office</h1>
-  <p class="page-sub">Submit a question or request directly to the BBA Office. Your email will be sent to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="65070704250804160a0b4b12084b000110">[email&#160;protected]</a></strong> and a staff member will follow up within 1–2 business days.</p>
+  <p class="page-sub">Submit a question or request directly to the BBA Office. Your email will be sent to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3f5d5d5e7f525e4c5051114852115a5b4a">[email&#160;protected]</a></strong> and a staff member will follow up within 1–2 business days.</p>
 
   <div style="max-width:680px">
 
@@ -6252,7 +6286,7 @@ function stuReset() {
       <div class="em-preview-label">Email preview — sent to BBA office</div>
       <div class="em-preview-row">
         <span class="em-preview-key">To:</span>
-        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3e5c5c5f7e535f4d5150104953105b5a4b">[email&#160;protected]</a></span>
+        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe9c9c9fbe939f8d9190d08993d09b9a8b">[email&#160;protected]</a></span>
       </div>
       <div class="em-preview-row">
         <span class="em-preview-key">From:</span>
@@ -6265,7 +6299,13 @@ function stuReset() {
       <div class="em-preview-body" id="em-prev-body">—</div>
       <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
         <button class="em-submit" style="width:auto;padding:10px 20px" onclick="emSendEmail()">Open in email client</button>
-        <button class="em-submit" style="width:auto;padding:10px 20px;background:#4A4A4A" onclick="emCopyEmail()">C/* ── EMAIL MODULE — student submission (friend's logic) ── */
+        <button class="em-submit" style="width:auto;padding:10px 20px;background:#4A4A4A" onclick="emCopyEmail()">Copy to clipboard</button>      </div>
+    </div>
+  </div>
+</section>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── EMAIL MODULE — student submission ── */
 var emSelectedCat = '';
 
 function emSelectCat(btn, cat) {
@@ -6274,7 +6314,39 @@ function emSelectCat(btn, cat) {
   emSelectedCat = cat;
 }
 
-function emSubmit() {
+
+
+function emSendEmail() {
+  if (!window._emSubject) { emSubmit(); }
+  if (!window._emSubject) return;
+  window.location.href = 'mailto:bba@mason.wm.edu'
+    + '?subject=' + encodeURIComponent(window._emSubject)
+    + '&body='    + encodeURIComponent(window._emBody);
+}
+
+function emCopyEmail() {
+  if (!window._emBody) { emSubmit(); }
+  if (!window._emBody) return;
+  var text = 'To: bba@mason.wm.edu\nSubject: ' + window._emSubject + '\n\n' + window._emBody;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function(){ showToast('Copied to clipboard!'); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('Copied!');
+  }
+}
+
+function emResetForm() {
+  ['em-name','em-email','em-sid','em-major','em-subject','em-body'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.querySelectorAll('.em-cat-btn').forEach(function(b){ b.classList.remove('selected'); });
+  var prev = document.getElementById('em-preview');
+  if (prev) { prev.classList.remove('show'); prev.style.display = ''; }
+  emSelectedCat = ''; window._emSubject = window._emBody = '';
+}function emSubmit() {
   var name    = document.getElementById('em-name').value.trim()    || 'Student';
   var email   = document.getElementById('em-email').value.trim()   || 'student@wm.edu';
   var sid     = (document.getElementById('em-sid')   || {}).value  || '';
@@ -6287,41 +6359,4 @@ function emSubmit() {
     + 'Name: ' + name + (sid ? ' | ID: ' + sid : '') + (major ? ' | Major: ' + major : '') + '\n'
     + 'Email: ' + email + '\n\n'
     + body + '\n\n— Sent via BBA Student Portal';
-  document.getElementById('em-prev-from').textContent    = name + ' <' + email + '>';
-  document.getElementById('em-prev-subject').textContent = fullSubject;
-  document.getElementById('em-prev-body').textContent    = fullBody;
-  document.getElementById('em-preview').classList.add('show');
-  window._emSubject = fullSubject;
-  window._emBody    = fullBody;
-}
-
-function emSendEmail() {
-  if (!window._emSubject) { emSubmit(); return; }
-  window.location.href = 'mailto:bba@mason.wm.edu'
-    + '?subject=' + encodeURIComponent(window._emSubject)
-    + '&body='    + encodeURIComponent(window._emBody);
-}
-
-function emCopyEmail() {
-  if (!window._emBody) { emSubmit(); }
-  var text = 'To: bba@mason.wm.edu\nSubject: ' + (window._emSubject||'') + '\n\n' + (window._emBody||'');
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function(){ showToast('Copied to clipboard!'); });
-  } else {
-    var ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta); showToast('Copied!');
-  }
-}
-
-function emResetForm() {
-  ['em-name','em-email','em-sid','em-major','em-subject','em-body'].forEach(function(id){
-    var el = document.getElementById(id); if (el) el.value = '';
-  });
-  document.querySelectorAll('.em-cat-btn').forEach(function(b){ b.classList.remove('selected'); });
-  var prev = document.getElementById('em-preview');
-  if (prev) prev.classList.remove('show');
-  emSelectedCat = ''; window._emSubject = window._emBody = '';
-}
-</script>
-</body>
+  document.getElementById('em-prev-from')
