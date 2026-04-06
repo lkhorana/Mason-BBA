@@ -27,6 +27,7 @@
     document.documentElement.style.visibility = 'visible'
     // Expose staff email globally so audit logging can use it
     window._staffEmail = session.user.email;
+    window._staffToken = session.access_token;
     window._supabaseKey = 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe';
     window._supabaseUrl = 'https://uxukblmzshpqlcdlthzb.supabase.co';
   }
@@ -5595,10 +5596,11 @@ const TABS = ['overview','transfer','faq','advising','email'];
 
     /* ── Load emails submitted via student portal ───────── */
     function emLoadStudentEmails() {
+  var authToken = window._staffToken || 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe';
   fetch('https://uxukblmzshpqlcdlthzb.supabase.co/rest/v1/student_emails?select=*&order=created_at.desc&limit=50', {
     headers: {
       'apikey': 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
-      'Authorization': 'Bearer sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
+      'Authorization': 'Bearer ' + authToken
     }
   })
   .then(function(r){ return r.json(); })
