@@ -5984,57 +5984,7 @@ setInterval(loadSheetData, 60000);
     var emDraftVisible  = false;
 
     /* ── Email data ─────────────────────────────────────────── */
-    var emEmails = [
-      {
-        id: 1, name: 'Marcus Williams', initials: 'MW', email: 'mwilliams@wm.edu',
-        subject: 'Transfer credit from UVA — ECON 201',
-        body: "Hi,\n\nI took ECON 201 at UVA last summer and I'd like to request a transfer credit evaluation. I have the syllabus ready to share. Could you let me know the next steps?\n\nThank you,\nMarcus",
-        category: 'Transfer inquiry', urgency: 'low', time: '10:32 am', unread: true,
-        avatarBg: '#E6F1FB', avatarColor: '#185FA5'
-      },
-      {
-        id: 2, name: 'Sofia Patel', initials: 'SP', email: 'spatel@wm.edu',
-        subject: 'Urgent — pass/fail deadline today',
-        body: "Hi,\n\nI need to change BUS 302 to pass/fail before the end of the day. The deadline is today at 5pm. I've already spoken to my advisor but need the form approved.\n\nThanks,\nSofia",
-        category: 'Pass/fail request', urgency: 'high', time: '9:14 am', unread: true,
-        avatarBg: '#EEEDFE', avatarColor: '#534AB7'
-      },
-      {
-        id: 3, name: 'Jordan Lee', initials: 'JL', email: 'jlee@wm.edu',
-        subject: 'Graduation timeline — can I finish in 3.5 years?',
-        body: "Hello,\n\nI'm currently a sophomore and I'm wondering if it's possible to finish my BBA one semester early. Could we schedule a meeting to review my plan of study?\n\nBest,\nJordan",
-        category: 'Graduation timeline', urgency: 'medium', time: 'Yesterday', unread: false,
-        avatarBg: '#FBEAF0', avatarColor: '#993556'
-      },
-      {
-        id: 4, name: 'Aiden Brooks', initials: 'AB', email: 'abrooks@wm.edu',
-        subject: 'Course equivalency — FIN 301 from community college',
-        body: "Hi there,\n\nI completed a finance course at NOVA Community College last year (FIN 123). I'm hoping to get credit toward BUS FIN 301. The course covered the same topics — I can provide the syllabus.\n\nThanks,\nAiden",
-        category: 'Course evaluation', urgency: 'medium', time: 'Yesterday', unread: true,
-        avatarBg: '#FAEEDA', avatarColor: '#854F0B'
-      },
-      {
-        id: 5, name: 'Priya Nair', initials: 'PN', email: 'pnair@wm.edu',
-        subject: 'When does add/drop close this semester?',
-        body: "Hi,\n\nI just wanted to confirm when the add/drop deadline is for this semester. I couldn't find it clearly on the website.\n\nThank you!\nPriya",
-        category: 'General question', urgency: 'low', time: 'Mon', unread: false,
-        avatarBg: '#F1EFE8', avatarColor: '#5F5E5A'
-      },
-      {
-        id: 6, name: 'Tyler Cross', initials: 'TC', email: 'tcross@wm.edu',
-        subject: 'Switching concentration to finance',
-        body: "Hello,\n\nI'm currently in the management concentration but I'm thinking about switching to finance. Could I set up a meeting to discuss how this would impact my graduation timeline and remaining requirements?\n\nThanks,\nTyler",
-        category: 'Course guidance', urgency: 'low', time: 'Mon', unread: false,
-        avatarBg: '#E1F5EE', avatarColor: '#0F6E56'
-      },
-      {
-        id: 7, name: 'Emma Zhao', initials: 'EZ', email: 'ezhao@wm.edu',
-        subject: 'URGENT — transfer credit appeal needed ASAP',
-        body: "Hi,\n\nMy transfer credit request for ACCT 201 from George Mason was denied but I believe there was an error — the syllabus I submitted matched the course content exactly. I need this resolved before registration opens Thursday.\n\nEmma",
-        category: 'Transfer inquiry', urgency: 'high', time: 'Mon', unread: false,
-        avatarBg: '#E6F1FB', avatarColor: '#185FA5'
-      }
-    ];
+    var emEmails = [];
 
     /* ── FAQ database ────────────────────────────────────────── */
     var emFAQs = [
@@ -6186,14 +6136,17 @@ setInterval(loadSheetData, 60000);
   .then(function(r){ return r.json(); })
   .then(function(rows) {
     if (!Array.isArray(rows) || !rows.length) return;
-    var existingIds = emEmails.map(function(e){ return 'sb_' + e.id; });
+    // Only deduplicate against other Supabase-sourced emails
+    var existingSupabaseIds = emEmails
+      .filter(function(e){ return e.source === 'supabase'; })
+      .map(function(e){ return e.supabaseId; });
     var added = 0;
     rows.forEach(function(row) {
-      var uid = 'sb_' + row.id;
-      if (existingIds.includes(uid)) return;
+      if (existingSupabaseIds.includes(row.id)) return;
       var name = row.name || 'Student';
       emEmails.unshift({
-        id:         uid,
+        id:         'supabase_' + row.id,
+        supabaseId: row.id,
         name:       name,
         initials:   name.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(),
         email:      row.email || '',
@@ -6208,7 +6161,7 @@ setInterval(loadSheetData, 60000);
         avatarColor:'#185FA5',
         source:     'supabase'
       });
-      existingIds.push(uid);
+      existingSupabaseIds.push(row.id);
       added++;
     });
     if (added > 0) { emStats(); emRender(); }
