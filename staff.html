@@ -1232,7 +1232,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 <div class="toast" id="toast"></div>
 
 <!-- ── SCRIPTS ── -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ── BBA PORTAL DATA FILE ──
 // Auto-generated from Blackboard + mason.wm.edu scraped content
 // FAQ: 65 answers | Transfer Credits: 360 records
@@ -5588,6 +5588,54 @@ function gReset() {
 // ── TAB ROUTING ──────────────────────────────────────────────────────────────
 const TABS = ['overview','transfer','faq','advising','email'];
 
+
+    /* ── Load emails submitted via student portal ───────── */
+    function emLoadStudentEmails() {
+  fetch('https://uxukblmzshpqlcdlthzb.supabase.co/rest/v1/student_emails?select=*&order=created_at.desc&limit=50', {
+    headers: {
+      'apikey': 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
+      'Authorization': 'Bearer sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
+    }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(rows) {
+    console.log('Supabase read:', rows);
+    if (!Array.isArray(rows) || !rows.length) { console.log('No rows returned'); return; }
+    // Only deduplicate against other Supabase-sourced emails
+    var existingSupabaseIds = emEmails
+      .filter(function(e){ return e.source === 'supabase'; })
+      .map(function(e){ return e.supabaseId; });
+    var added = 0;
+    rows.forEach(function(row) {
+      if (existingSupabaseIds.includes(row.id)) return;
+      var name = row.name || 'Student';
+      emEmails.unshift({
+        id:         'supabase_' + row.id,
+        supabaseId: row.id,
+        name:       name,
+        initials:   name.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(),
+        email:      row.email || '',
+        sid:        row.sid   || '',
+        subject:    row.subject || 'BBA inquiry',
+        body:       row.body    || '',
+        category:   row.category || 'General question',
+        urgency:    row.urgency  || 'low',
+        time:       new Date(row.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+        unread:     row.unread !== false,
+        avatarBg:   '#E6F1FB',
+        avatarColor:'#185FA5',
+        source:     'supabase'
+      });
+      existingSupabaseIds.push(row.id);
+      added++;
+    });
+    console.log('Added', added, 'emails from Supabase. Total:', emEmails.length);
+    emStats();
+    emRender();
+  })
+  .catch(function(e){ console.error('Supabase read error:', e); });
+}
+
 function showTab(id) {
   TABS.forEach(t => {
     const sec = document.getElementById(t);
@@ -5804,8 +5852,8 @@ function closeApptModal(ev) {
 })();
 
 /* ── GOOGLE SHEETS LIVE DATA ── */
-var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QLJe0i--bVH-KoH2TcFJK2kSdQ39SeuSVe3JSO6WKFk/export?format=csv&gid=1587720198';
-var TC_SHEET_URL  = 'https://docs.google.com/spreadsheets/d/1Y8zxe5i1e0rcQijw75IfrBo4ZpbQL2-pMRzIHTojz4Q/export?format=csv&gid=1178944391';
+var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QLJe0i--bVH-KoH2TcFJK2kSdQ39SeuSVe3JSO6WKFk/gviz/tq?tqx=out:csv&gid=1587720198';
+var TC_SHEET_URL  = 'https://docs.google.com/spreadsheets/d/1Y8zxe5i1e0rcQijw75IfrBo4ZpbQL2-pMRzIHTojz4Q/gviz/tq?tqx=out:csv&gid=1178944391';
 
 function loadSheetData() {
   // Load live FAQ answers from Google Sheet
@@ -6128,52 +6176,7 @@ setInterval(loadSheetData, 60000);
 
     /* ── Stats ───────────────────────────────────────────────── */
 
-    /* ── Load emails submitted via student portal ───────── */
-    function emLoadStudentEmails() {
-  fetch('https://uxukblmzshpqlcdlthzb.supabase.co/rest/v1/student_emails?select=*&order=created_at.desc&limit=50', {
-    headers: {
-      'apikey': 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
-      'Authorization': 'Bearer sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
-    }
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(rows) {
-    console.log('Supabase read:', rows);
-    if (!Array.isArray(rows) || !rows.length) { console.log('No rows returned'); return; }
-    // Only deduplicate against other Supabase-sourced emails
-    var existingSupabaseIds = emEmails
-      .filter(function(e){ return e.source === 'supabase'; })
-      .map(function(e){ return e.supabaseId; });
-    var added = 0;
-    rows.forEach(function(row) {
-      if (existingSupabaseIds.includes(row.id)) return;
-      var name = row.name || 'Student';
-      emEmails.unshift({
-        id:         'supabase_' + row.id,
-        supabaseId: row.id,
-        name:       name,
-        initials:   name.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(),
-        email:      row.email || '',
-        sid:        row.sid   || '',
-        subject:    row.subject || 'BBA inquiry',
-        body:       row.body    || '',
-        category:   row.category || 'General question',
-        urgency:    row.urgency  || 'low',
-        time:       new Date(row.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}),
-        unread:     row.unread !== false,
-        avatarBg:   '#E6F1FB',
-        avatarColor:'#185FA5',
-        source:     'supabase'
-      });
-      existingSupabaseIds.push(row.id);
-      added++;
-    });
-    console.log('Added', added, 'emails from Supabase. Total:', emEmails.length);
-    emStats();
-    emRender();
-  })
-  .catch(function(e){ console.error('Supabase read error:', e); });
-}
+
 
         function emStats() {
       document.getElementById('em-stat-total').textContent   = emEmails.length;
