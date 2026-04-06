@@ -858,7 +858,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
         <a href="#" onclick="showTab('faq');return false;"      class="qlk">Manage FAQ Escalations<div class="qlk-sub">6 unresolved — 2 overdue</div></a>
         <a href="#" onclick="showTab('transfer');return false;" class="qlk">Review Transfer Credits<div class="qlk-sub">12 expired decisions need re-review</div></a>
         <a href="#" onclick="showTab('advising');return false;" class="qlk">View Advising Appointments<div class="qlk-sub">4 this week with pre-loaded summaries</div></a>
-        <a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a>
+        <a href="/cdn-cgi/l/email-protection#791b1b183914180a1617570e14571c1d0c" style="color:var(--blue)"><span class="__cf_email__" data-cfemail="d7b5b5b697bab6a4b8b9f9a0baf9b2b3a2">[email&#160;protected]</span></a>
       </div>
 
       <div class="sidebar-card" style="margin-top:16px">
@@ -1232,7 +1232,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 <div class="toast" id="toast"></div>
 
 <!-- ── SCRIPTS ── -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── BBA PORTAL DATA FILE ──
 // Auto-generated from Blackboard + mason.wm.edu scraped content
 // FAQ: 65 answers | Transfer Credits: 360 records
@@ -5647,7 +5647,11 @@ function showTab(id) {
   if (id === 'transfer') tcRefresh();
   if (id === 'faq')      { escRefresh(); kbRefresh(); }
   if (id === 'advising') { renderAppts(); gSetStep(1); }
-  if (id === 'email')    { emLoadStudentEmails(); emStats(); emRender(); }
+  if (id === 'email')    {
+    if (typeof emLoadStudentEmails === 'function') emLoadStudentEmails();
+    if (typeof emStats === 'function') emStats();
+    if (typeof emRender === 'function') emRender();
+  }
   history.replaceState(null, '', '#' + id);
 }
 
@@ -5840,8 +5844,6 @@ function closeApptModal(ev) {
   const tab  = TABS.includes(hash) ? hash : 'overview';
   showTab(tab);
   updateEscStats();
-  emLoadStudentEmails();
-  setInterval(emLoadStudentEmails, 30000);
   // Wire any remaining internal links
   document.querySelectorAll('a[href^="staff.html#"]').forEach(function(a) {
     a.addEventListener('click', function(e) {
@@ -5851,14 +5853,26 @@ function closeApptModal(ev) {
   });
 })();
 
+// Defer email module init until all scripts have loaded
+window.addEventListener('load', function() {
+  if (typeof emLoadStudentEmails === 'function') {
+    emLoadStudentEmails();
+    setInterval(emLoadStudentEmails, 30000);
+  }
+});
+
 /* ── GOOGLE SHEETS LIVE DATA ── */
 var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QLJe0i--bVH-KoH2TcFJK2kSdQ39SeuSVe3JSO6WKFk/gviz/tq?tqx=out:csv&gid=1587720198';
 var TC_SHEET_URL  = 'https://docs.google.com/spreadsheets/d/1Y8zxe5i1e0rcQijw75IfrBo4ZpbQL2-pMRzIHTojz4Q/gviz/tq?tqx=out:csv&gid=1178944391';
 
 function loadSheetData() {
   // Load live FAQ answers from Google Sheet
+  // NOTE: Sheets must be publicly shared ("Anyone with the link can view") for this to work.
   fetch(SHEET_CSV_URL)
-    .then(function(r){ return r.text(); })
+    .then(function(r){
+      if (!r.ok) throw new Error('FAQ sheet not public or inaccessible');
+      return r.text();
+    })
     .then(function(csv){
       csv.split('\n').forEach(function(line){
         var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g)||[];
@@ -5872,7 +5886,7 @@ function loadSheetData() {
       // Refresh FAQ display if tab is active
       var kbContainer = document.getElementById('kb-container');
       if (kbContainer && kbContainer.children.length) kbRefresh();
-    }).catch(function(){});
+    }).catch(function(e){ console.warn('Google Sheet (FAQ) unavailable — make sure it is shared publicly:', e.message); });
 
   // Load live Transfer Credits from Google Sheet
   fetch(TC_SHEET_URL)
@@ -5910,7 +5924,7 @@ function loadSheetData() {
         var tcBody = document.getElementById('tc-body');
         if (tcBody) tcRefresh();
       }
-    }).catch(function(){});
+    }).catch(function(e){ console.warn('Google Sheet (Transfer Credits) unavailable — make sure it is shared publicly:', e.message); });
 }
 
 loadSheetData();
@@ -5976,7 +5990,7 @@ setInterval(loadSheetData, 60000);
         <div class="em-preview-label">Email preview — sent to BBA office</div>
         <div class="em-preview-row">
           <span class="em-preview-key">To:</span>
-          <span><a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a></span>
+          <span><a href="/cdn-cgi/l/email-protection#57353536173a3624383979203a79323322" style="color:var(--blue)"><span class="__cf_email__" data-cfemail="294b4b486944485a4647075e44074c4d5c">[email&#160;protected]</span></a></span>
           <!-- TODO: replace with real inbox address -->
         </div>
         <div class="em-preview-row">
@@ -6026,7 +6040,7 @@ setInterval(loadSheetData, 60000);
 
 </section>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ── EMAIL MODULE — exact from friend ── */
 /* ── State ──────────────────────────────────────────────── */
     var emSelectedCat   = '';
@@ -6402,23 +6416,14 @@ setInterval(loadSheetData, 60000);
       var ta = document.getElementById('em-draft-textarea');
       if (!ta) return;
       ta.select();
-      document.execCommand('copy');
-      var btn = evt ? evt.target : null;
-      if (btn) {
-        var orig = btn.textContent;
-        btn.textContent = 'Copied!';
-        setTimeout(function(){ btn.textContent = orig; }, 1800);
+      try {
+        navigator.clipboard.writeText(ta.value).then(function() {
+          var btn = evt && evt.target;
+          if (btn) { var orig = btn.textContent; btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = orig; }, 1500); }
+        });
+      } catch(e) {
+        document.execCommand('copy');
       }
     }
 
-    function emClearDraft() {
-      var ta = document.getElementById('em-draft-textarea');
-      if (ta) { ta.value = ''; ta.focus();
-      ta.focus();
-    }
-
-    emStats();
-    emRender();
 </script>
-</body>
-</html>
