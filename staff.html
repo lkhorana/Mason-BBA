@@ -18,19 +18,12 @@
     'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
   )
 
-  const allowedEmails = [
-    'lkhorana@wm.edu',
-    'andy.kandell@mason.wm.edu',
-    'tcmathieux@wm.edu',
-    'terry.hinders@mason.wm.edu'
-  ]
-
   const { data: { session } } = await supabase.auth.getSession()
 
-  if (!session || !session.user || !allowedEmails.includes(session.user.email.toLowerCase())) {
+  if (!session || !session.user) {
     window.location.href = 'login.html'
   } else {
-    // Valid session — reveal the page
+    // Valid Supabase session — reveal the page
     document.documentElement.style.visibility = 'visible'
   }
 </script>

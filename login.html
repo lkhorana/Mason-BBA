@@ -161,14 +161,6 @@ h2 {
     'https://uxukblmzshpqlcdlthzb.supabase.co',
     'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
   )
-
-  const ALLOWED = [
-    'lkhorana@wm.edu',
-    'andy.kandell@mason.wm.edu',
-    'tcmathieux@wm.edu',
-    'terry.hinders@mason.wm.edu'
-  ]
-
   function showErr(msg) {
     document.getElementById('err').textContent = msg;
     document.getElementById('err').style.display = 'block';
@@ -186,7 +178,7 @@ h2 {
   // If already logged in with an allowed email, go straight to staff
   async function checkExisting() {
     const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user && ALLOWED.includes(session.user.email)) {
+    if (session?.user) {
       window.location.href = 'staff.html'
     }
   }
@@ -217,13 +209,7 @@ h2 {
       return
     }
 
-    if (!ALLOWED.includes(data.user.email)) {
-      await supabase.auth.signOut()
-      showErr(data.user.email + ' is not authorised to access this dashboard.')
-      return
-    }
-
-    // Success — go to staff dashboard
+        // Success — go to staff dashboard
     window.location.href = 'staff.html'
   }
 
