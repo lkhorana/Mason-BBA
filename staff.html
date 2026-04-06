@@ -27,7 +27,6 @@
     document.documentElement.style.visibility = 'visible'
     // Expose staff email globally so audit logging can use it
     window._staffEmail = session.user.email;
-    window._staffToken = session.access_token;
     window._supabaseKey = 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe';
     window._supabaseUrl = 'https://uxukblmzshpqlcdlthzb.supabase.co';
   }
@@ -5596,11 +5595,10 @@ const TABS = ['overview','transfer','faq','advising','email'];
 
     /* ── Load emails submitted via student portal ───────── */
     function emLoadStudentEmails() {
-  var authToken = window._staffToken || 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe';
   fetch('https://uxukblmzshpqlcdlthzb.supabase.co/rest/v1/student_emails?select=*&order=created_at.desc&limit=50', {
     headers: {
       'apikey': 'sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe',
-      'Authorization': 'Bearer ' + authToken
+      'Authorization': 'Bearer sb_publishable_aWWdekhFISCmk_6zIbrjbQ_kwj0r3Qe'
     }
   })
   .then(function(r){ return r.json(); })
@@ -5868,7 +5866,7 @@ window.addEventListener('load', function() {
 });
 
 /* ── GOOGLE SHEETS LIVE DATA ── */
-var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QLJe0i--bVH-KoH2TcFJK2kSdQ39SeuSVe3JSO6WKFk/gviz/tq?tqx=out:csv&gid=1587720198';
+var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1BvA786SuBLpB6doUGOMrWRONt5e0nKGGrqNaiTJu03Y/gviz/tq?tqx=out:csv';
 var TC_SHEET_URL  = 'https://docs.google.com/spreadsheets/d/1Y8zxe5i1e0rcQijw75IfrBo4ZpbQL2-pMRzIHTojz4Q/gviz/tq?tqx=out:csv&gid=1178944391';
 
 function loadSheetData() {
@@ -6222,7 +6220,7 @@ setInterval(loadSheetData, 60000);
         var isOpen = emCurrentEmail && emCurrentEmail.id === e.id;
         html += '<div class="em-email-row' + (e.unread ? ' unread' : '') + (isOpen ? ' em-row-open' : '') + '"'
           + ' data-id="' + e.id + '"'
-          + ' onclick="emOpenDetail(' + e.id + ')">'
+          + ' onclick="emOpenDetail(\'' + e.id + '\')">'
           + '<div class="em-avatar" style="background:' + e.avatarBg + ';color:' + e.avatarColor + ';">' + e.initials + '</div>'
           + '<div class="em-email-meta">'
             + '<div class="em-email-top">'
@@ -6333,7 +6331,7 @@ setInterval(loadSheetData, 60000);
         emCloseDetail();
         return;
       }
-      var e = emEmails.find(function(x){ return x.id === id; });
+      var e = emEmails.find(function(x){ return String(x.id) === String(id); });
       if (!e) return;
       e.unread = false;
       emCurrentEmail = e;
