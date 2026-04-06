@@ -1496,7 +1496,7 @@ if (document.readyState === 'loading') {
       <div class="portal-title">Student Portal</div>
     </div>
     <div style="display:flex;align-items:center;gap:16px">
-      <a href="staff.html" class="portal-nav-link">Staff Dashboard →</a>
+      <a href="login.html" class="portal-nav-link">Staff Dashboard →</a>
       <div class="portal-meta"><span class="dot"></span>Spring 2025</div>
     </div>
   </div>
@@ -1523,9 +1523,9 @@ if (document.readyState === 'loading') {
     <div>
       <h2 class="page-title" style="font-size:18px;margin-bottom:16px">Quick links</h2>
       <div class="ql">
-        <a href="student.html#transfer" class="qlk">Check a Transfer Credit Decision<div class="qlk-sub">360 decisions from 108 institutions on file</div></a>
-        <a href="student.html#faq"      class="qlk">Search the FAQ<div class="qlk-sub">65 answers from Blackboard + mason.wm.edu</div></a>
-        <a href="student.html#guidance" class="qlk">Book an Advising Appointment<div class="qlk-sub">4-step form — Calendly pre-filled for you</div></a>
+        <a href="#" onclick="showTab('transfer');return false;" class="qlk">Check a Transfer Credit Decision<div class="qlk-sub">360 decisions from 108 institutions on file</div></a>
+        <a href="#" onclick="showTab('faq');return false;"      class="qlk">Search the FAQ<div class="qlk-sub">65 answers from Blackboard + mason.wm.edu</div></a>
+        <a href="#" onclick="showTab('guidance');return false;" class="qlk">Book an Advising Appointment<div class="qlk-sub">4-step form — Calendly pre-filled for you</div></a>
         <a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a>
       </div>
       <div class="sidebar-card" style="margin-top:16px">
@@ -1698,7 +1698,7 @@ if (document.readyState === 'loading') {
     <p style="font-size:13px;color:var(--mid);margin-bottom:12px">Still have a question? Reach out or book an appointment.</p>
     <div class="btn-row" style="justify-content:center">
       <a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a>
-      <a href="student.html#guidance"   class="btn btn-ghost">Book an Appointment</a>
+      <a href="#" onclick="showTab('guidance');return false;"   class="btn btn-ghost">Book an Appointment</a>
     </div>
   </div>
 
@@ -6117,14 +6117,14 @@ function toggleAnn(i) {
 
 // ── GUIDANCE 4-STEP FORM ─────────────────────────────────────────────────────
 const ADVISOR_MAP = {
-  'Admissions / Application Requirements': { type: 'Pre-Admissions Advisor',     cal: 'admissions-advising' },
-  'Course Planning & Registration':        { type: 'Academic Advisor',            cal: 'course-planning'     },
-  'Transfer Credit Evaluation':            { type: 'Transfer Credit Coordinator', cal: 'transfer-credit'     },
-  'Pass/Fail Request':                     { type: 'Academic Advisor',            cal: 'pass-fail'           },
-  'Graduation Planning & Timeline':        { type: 'Graduation Advisor',          cal: 'graduation-planning' },
-  'Study Abroad Planning':                 { type: 'Academic Advisor + Reves Center', cal: 'study-abroad'   },
-  'Major / Concentration Change':          { type: 'Academic Advisor',            cal: 'major-change'        },
-  'Other':                                 { type: 'General Academic Advisor',    cal: 'general-advising'    },
+  'Admissions / Application Requirements': { type: 'Pre-Admissions Advisor',     cal: 'd11s2yx' },
+  'Course Planning & Registration':        { type: 'Academic Advisor',            cal: 'd11s2yx' },
+  'Transfer Credit Evaluation':            { type: 'Transfer Credit Coordinator', cal: 'd11s2yx' },
+  'Pass/Fail Request':                     { type: 'Academic Advisor',            cal: 'd11s2yx' },
+  'Graduation Planning & Timeline':        { type: 'Graduation Advisor',          cal: 'd11s2yx' },
+  'Study Abroad Planning':                 { type: 'Academic Advisor',            cal: 'd11s2yx' },
+  'Major / Concentration Change':          { type: 'Academic Advisor',            cal: 'd11s2yx' },
+  'Other':                                 { type: 'General Academic Advisor',    cal: 'd11s2yx' },
 };
 
 let gCurrentStep = 1;
@@ -6212,7 +6212,10 @@ function gBuildSummary() {
     a2: `${maj} | ${grad} | ID: ${sid}`,
     a3: desc.substring(0, 200)
   });
-  gCalUrl = `https://calendly.com/mason-bba/${adv.cal}?${params.toString()}`;
+  // Build Calendly URL — use the BBA office scheduling page
+  // Replace 'mason-bba-advising' with your actual Calendly username/event
+  const baseCalUrl = 'https://calendly.com/mason-bba-advising';
+  gCalUrl = baseCalUrl + '?' + params.toString();
 }
 
 function gOpenCal() { if (gCalUrl) window.open(gCalUrl, '_blank'); }
@@ -6474,10 +6477,13 @@ setInterval(loadSheetData, 60000);
       </div>
     </div>
 
-    <button class="em-submit" onclick="emSubmit()">Generate &amp; send email</button>
+    <button class="em-submit" onclick="emSubmit()">Generate email preview</button>
 
     <div class="em-preview" id="em-preview">
-      <div class="em-preview-label">Email preview — sent to BBA office</div>
+      <div class="em-preview-label">Email preview — ready to send</div>
+        <div style="background:#E6F2EF;border:1px solid #9FCEC7;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#0F6B5A;line-height:1.5">
+          ℹ️ This portal <strong>generates</strong> a formatted email for you. Click <strong>Open in email app</strong> below to send it — your email client (Outlook, Gmail, etc.) will open with everything pre-filled. Just hit Send.
+        </div>
       <div class="em-preview-row">
         <span class="em-preview-key">To:</span>
         <span><a href="mailto:bba@mason.wm.edu" style="color:var(--blue)">bba@mason.wm.edu</a></span>
