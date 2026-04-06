@@ -6359,4 +6359,14 @@ function emResetForm() {
     + 'Name: ' + name + (sid ? ' | ID: ' + sid : '') + (major ? ' | Major: ' + major : '') + '\n'
     + 'Email: ' + email + '\n\n'
     + body + '\n\n— Sent via BBA Student Portal';
-  document.getElementById('em-prev-from')
+  document.getElementById('em-prev-from').textContent    = name + ' <' + email + '>';
+  document.getElementById('em-prev-subject').textContent = fullSubject;
+  document.getElementById('em-prev-body').textContent    = fullBody;
+  var prev = document.getElementById('em-preview');
+  if (prev) { prev.classList.add('show'); prev.style.display = ''; }
+  window._emSubject = fullSubject;
+  window._emBody    = fullBody;
+}
+</script>
+</body>
+</html>
