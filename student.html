@@ -6380,8 +6380,13 @@ var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QLJe0i--bVH-KoH2TcF
 var TC_SHEET_URL  = 'https://docs.google.com/spreadsheets/d/1Y8zxe5i1e0rcQijw75IfrBo4ZpbQL2-pMRzIHTojz4Q/export?format=csv&gid=1178944391';
 
 function loadSheetData() {
+  // Note: sheets must be published publicly (File→Share→Publish to web) for this to work
+  // If private, the fetch silently fails and hardcoded data is used as fallback
   fetch(SHEET_CSV_URL)
-    .then(function(r){ return r.text(); })
+    .then(function(r){ 
+      if (!r.ok) throw new Error('Sheet not public');
+      return r.text(); 
+    })
     .then(function(csv){
       csv.split('\n').forEach(function(line){
         var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g)||[];
@@ -6395,7 +6400,10 @@ function loadSheetData() {
     }).catch(function(){});
 
   fetch(TC_SHEET_URL)
-    .then(function(r){ return r.text(); })
+    .then(function(r){ 
+      if (!r.ok) throw new Error('TC Sheet not public');
+      return r.text(); 
+    })
     .then(function(csv){
       var lines = csv.split('\n');
       if (lines.length < 2) return;

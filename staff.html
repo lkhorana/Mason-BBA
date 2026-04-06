@@ -5828,7 +5828,10 @@ function loadSheetData() {
 
   // Load live Transfer Credits from Google Sheet
   fetch(TC_SHEET_URL)
-    .then(function(r){ return r.text(); })
+    .then(function(r){ 
+      if (!r.ok) throw new Error('TC Sheet not public');
+      return r.text(); 
+    })
     .then(function(csv){
       var lines = csv.split('\n');
       if (lines.length < 2) return;
@@ -6135,7 +6138,8 @@ setInterval(loadSheetData, 60000);
   })
   .then(function(r){ return r.json(); })
   .then(function(rows) {
-    if (!Array.isArray(rows) || !rows.length) return;
+    console.log('Supabase read:', rows);
+    if (!Array.isArray(rows) || !rows.length) { console.log('No rows returned'); return; }
     // Only deduplicate against other Supabase-sourced emails
     var existingSupabaseIds = emEmails
       .filter(function(e){ return e.source === 'supabase'; })
@@ -6164,9 +6168,11 @@ setInterval(loadSheetData, 60000);
       existingSupabaseIds.push(row.id);
       added++;
     });
-    if (added > 0) { emStats(); emRender(); }
+    console.log('Added', added, 'emails from Supabase. Total:', emEmails.length);
+    emStats();
+    emRender();
   })
-  .catch(function(){});
+  .catch(function(e){ console.error('Supabase read error:', e); });
 }
 
         function emStats() {
